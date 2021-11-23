@@ -43,7 +43,7 @@ class _RandomWordsState extends State<RandomWords> {
 
                     final index = i ~/ 2;
                     if (index >= _suggestions.length) {
-                        _suggestions.addAll(generateWordPairs().take(10));
+                        _suggestions.addAll(generateWordPairs().take(15));
                     }
                     return _buildRow(_suggestions[index]);
                 });
