@@ -11,49 +11,84 @@ class MyApp extends StatelessWidget {
     // This widget is the root of your application.
     @override
     Widget build(BuildContext context) {
+        Widget titleSection = Container(
+            padding: const EdgeInsets.all(32),
+            child: Row(
+                children: [
+                    Expanded(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                                Container(
+                                    padding: const EdgeInsets.only(bottom: 8),
+                                    child: Text(
+                                        'Oeschinen Lake Campground',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                        ),
+                                    ),
+                                ),
+                                Text(
+                                    'Kandersteg, Switzerland',
+                                    style: TextStyle(
+                                            color : Colors.grey[500],
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ),
+                    Icon(
+                        Icons.star,
+                        color: Colors.red[500],
+                    ),
+                    Text('41'),
+                ],
+            ),        
+        );
+        Color color = Theme.of(context).primaryColor;
+     
+         Widget buttonSection = Container(
+             child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                     _buildButtonCOlumn(color, Icons.call, 'CALL'),
+                     _buildButtonCOlumn(color, Icons.near_me, 'ROUTE'),
+                    _buildButtonCOlumn(color, Icons.share, 'SHARE'),
+                ],
+            ),
+        );
+
         return MaterialApp(
             title: 'Startup Name Generator',
-            home: RandomWords(),
-            );
+            home: Scaffold(
+                body: Column(
+                    children: [
+                        titleSection,
+                        buttonSection,
+                    ],
+                ),
+            ),
+        );
     }
-}
-
-class RandomWords extends StatefulWidget {
-    @override
-    _RandomWordsState createState() => _RandomWordsState();
-}
-
-class _RandomWordsState extends State<RandomWords> {
-    final _suggestions = <WordPair>[];
-    final _biggerFont = const TextStyle(fontSize: 18.0);
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-                appBar: AppBar(
-                    title: const Text('Startup Name Generator'),
-                    ),
-                    body: _buildSuggestions(),
-                );
-    }
-    Widget _buildSuggestions() {
-        return ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemBuilder: (context, i){
-                    if (i.isOdd) return const Divider();
-
-                    final index = i ~/ 2;
-                    if (index >= _suggestions.length) {
-                        _suggestions.addAll(generateWordPairs().take(15));
-                    }
-                    return _buildRow(_suggestions[index]);
-                });
-    }
-    Widget _buildRow(WordPair pair){
-        return ListTile(
-                title: Text(
-                        pair.asPascalCase,
-                        style: _biggerFont,
+    Column _buildButtonCOlumn(Color color, IconData icon, String label) {
+        return Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                Icon(icon, color: color),
+                Container(
+                    margin: const EdgeInsets.only(top: 8),
+                    child: Text(
+                        label,
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: color,    
                         ),
-                );
+                    ),
+                ),
+            ],
+        );
     }
 }
+
