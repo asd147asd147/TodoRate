@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
                                     ),
                                 ),
                                 Text(
-                                    'IOS Update complete',
+                                    'IOS Update complete testing',
                                     style: TextStyle(
                                             color : Colors.grey[500],
                                     ),
