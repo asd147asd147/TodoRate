@@ -21,14 +21,14 @@ class MyApp extends StatelessWidget {
                                 Container(
                                     padding: const EdgeInsets.only(bottom: 8),
                                     child: Text(
-                                        'Oeschinen Lake Campground',
+                                        'My Todo List',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                         ),
                                     ),
                                 ),
                                 Text(
-                                    'Kandersteg, Switzerland',
+                                    'IOS Update complete testing 3:',
                                     style: TextStyle(
                                             color : Colors.grey[500],
                                     ),
