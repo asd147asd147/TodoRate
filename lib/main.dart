@@ -19,24 +19,38 @@ class TodoList extends StatefulWidget {
 
 class _TodoListState extends State<TodoList> {
     final _suggestions = <Text>[];
+    bool _ischecked = true;
     final _biggerFont = const TextStyle(fontSize: 18.0);
-    Widget _buildRow(Text text){
-        return ListTile(
-                title: text,
+    int _counter = 10;
+    void _incrementCounter() {
+        setState(() {
+                _counter++;
+                _addTodo();
+        });
+    }
+
+    Widget _buildRow(){
+        //TODO
+        return CheckboxListTile(
+                title: Text("example"),
+                value: _ischecked,
+                onChanged: (value) {
+                    setState(() {
+                        _ischecked = !_ischecked;
+                    });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
                 );
     }
-    Widget _buildSuggestions() {
+    
+    Widget _addTodo() {
         return ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemBuilder: (context, i){
-                if (i.isOdd) return Divider();
-
-                final index = i~/2;
-                if(index >= _suggestions.length) {
-                    _suggestions.addAll([Text("hello"), Text("hi")]);
-                }
-                return _buildRow(_suggestions[index]);
-            });
+                padding: const EdgeInsets.all(16.0),
+                itemCount: _counter,
+                itemBuilder: (context, i) {
+                    if(i.isOdd) return Divider();
+                    return _buildRow();
+                });
     }
     @override
     Widget build(BuildContext context){
@@ -44,7 +58,12 @@ class _TodoListState extends State<TodoList> {
                 appBar: AppBar(
                         title: Text('Welcom to TodoList'),
                         ),
-                        body: _buildSuggestions(),
+                body: _addTodo(),
+                floatingActionButton: FloatingActionButton(
+                        onPressed: _incrementCounter,
+                        tooltip: 'Increment',
+                        child: Icon(Icons.add),
+                        ),
                 );
     }
 }
