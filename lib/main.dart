@@ -33,7 +33,7 @@ class _TodoListState extends State<TodoList> {
 
                 final index = i~/2;
                 if(index >= _suggestions.length) {
-                    _suggestions.addAll([Text("hello"), Text("hi")]);
+                    _suggestions.addAll([Text("hello"), Text("hi"), Text("Ni Hao")]);
                 }
                 return _buildRow(_suggestions[index]);
             });
