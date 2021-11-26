@@ -1,93 +1,50 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-    const MyApp({Key? key}) : super(key: key);
-
-    // This widget is the root of your application.
     @override
     Widget build(BuildContext context) {
-        Widget titleSection = Container(
-            padding: const EdgeInsets.all(32),
-            child: Row(
-                children: [
-                    Expanded(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                                Container(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: Text(
-                                        'My Todo List',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                        ),
-                                    ),
-                                ),
-                                Text(
-                                    'IOS Update complete testing 3:',
-                                    style: TextStyle(
-                                            color : Colors.grey[500],
-                                    ),
-                                ),
-                            ],
-                        ),
-                    ),
-                    Icon(
-                        Icons.star,
-                        color: Colors.red[500],
-                    ),
-                    Text('41'),
-                ],
-            ),        
-        );
-        Color color = Theme.of(context).primaryColor;
-     
-         Widget buttonSection = Container(
-             child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                     _buildButtonCOlumn(color, Icons.call, 'CALL'),
-                     _buildButtonCOlumn(color, Icons.near_me, 'ROUTE'),
-                    _buildButtonCOlumn(color, Icons.share, 'SHARE'),
-                ],
-            ),
-        );
-
         return MaterialApp(
-            title: 'Startup Name Generator',
-            home: Scaffold(
-                body: Column(
-                    children: [
-                        titleSection,
-                        buttonSection,
-                    ],
-                ),
-            ),
-        );
-    }
-    Column _buildButtonCOlumn(Color color, IconData icon, String label) {
-        return Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-                Icon(icon, color: color),
-                Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    child: Text(
-                        label,
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: color,    
-                        ),
-                    ),
-                ),
-            ],
+            title: 'My Flutter Todo List',
+            home: TodoList(),
         );
     }
 }
 
+class TodoList extends StatefulWidget {
+    @override
+    State<TodoList> createState() => _TodoListState();
+}
+
+class _TodoListState extends State<TodoList> {
+    final _suggestions = <Text>[];
+    final _biggerFont = const TextStyle(fontSize: 18.0);
+    Widget _buildRow(Text text){
+        return ListTile(
+                title: text,
+                );
+    }
+    Widget _buildSuggestions() {
+        return ListView.builder(
+            padding: const EdgeInsets.all(16.0),
+            itemBuilder: (context, i){
+                if (i.isOdd) return Divider();
+
+                final index = i~/2;
+                if(index >= _suggestions.length) {
+                    _suggestions.addAll([Text("hello"), Text("hi")]);
+                }
+                return _buildRow(_suggestions[index]);
+            });
+    }
+    @override
+    Widget build(BuildContext context){
+        return Scaffold(
+                appBar: AppBar(
+                        title: Text('Welcom to TodoList'),
+                        ),
+                        body: _buildSuggestions(),
+                );
+    }
+}
