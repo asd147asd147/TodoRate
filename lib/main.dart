@@ -19,6 +19,7 @@ class TodoList extends StatefulWidget {
 
 class _TodoListState extends State<TodoList> {
     final _suggestions = <Text>[];
+    bool _ischecked = true;
     final _biggerFont = const TextStyle(fontSize: 18.0);
     int _counter = 10;
     void _incrementCounter() {
