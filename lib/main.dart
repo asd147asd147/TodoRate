@@ -31,6 +31,7 @@ class _TodoListState extends State<TodoList> {
 
     Widget _buildRow(){
         //TODO
+        bool _ischecked = true;
         return CheckboxListTile(
                 title: Text("example"),
                 value: _ischecked,
