@@ -14,13 +14,13 @@ class MyApp extends StatelessWidget {
 
 class TodoList extends StatefulWidget {
     @override
-    State<TodoList> createState() => _TodoListState();
+    _TodoListState createState() => _TodoListState();
 }
 
 class _TodoListState extends State<TodoList> {
-    final _suggestions = <Text>[];
+    List<Map> Todos = [];
     final _biggerFont = const TextStyle(fontSize: 18.0);
-    int _counter = 10;
+    int _counter = 0;
     void _incrementCounter() {
         setState(() {
                 _counter++;
@@ -28,19 +28,19 @@ class _TodoListState extends State<TodoList> {
         });
     }
 
-    Widget _buildRow(){
-        //TODO
-        bool _ischecked = true;
-        return CheckboxListTile(
-                title: Text("example"),
-                value: _ischecked,
+    Widget _buildRow(){ 
+        return Todos.map((todo) {
+        CheckboxListTile(
+                title: Text(todo["name"]),
+                value: todo['isChecked'],
                 onChanged: (value) {
                     setState(() {
-                        _ischecked = !_ischecked;
+                        todo['isChecked'] = value;
                     });
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 );
+        });
     }
     
     Widget _addTodo() {
@@ -49,6 +49,7 @@ class _TodoListState extends State<TodoList> {
                 itemCount: _counter,
                 itemBuilder: (context, i) {
                     if(i.isOdd) return Divider();
+                    Todos.add({"name" : i, "isChecked": false});
                     return _buildRow();
                 });
     }
