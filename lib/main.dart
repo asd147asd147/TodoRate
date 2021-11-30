@@ -26,30 +26,31 @@ class _TodoListState extends State<TodoList> {
                 _counter++;
                 _addTodo();
         });
+        print(_counter);
     }
 
-    Widget _buildRow(){ 
-        return Todos.map((todo) {
-        CheckboxListTile(
-                title: Text(todo["name"]),
-                value: todo['isChecked'],
-                onChanged: (value) {
-                    setState(() {
-                        todo['isChecked'] = value;
-                    });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                );
+    Widget _buildRow(){
+        final test = Todos.map((todo) {
+            return CheckboxListTile(
+                    title: Text(todo["name"]),
+                    value: todo["isChecked"],
+                    onChanged: (value) {
+                        setState(() {
+                            todo["isChecked"] = value;
+                        });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    );
         });
+        return new Column(children: test.toList());
     }
     
     Widget _addTodo() {
         return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: _counter,
+                itemCount: 1,
                 itemBuilder: (context, i) {
-                    if(i.isOdd) return Divider();
-                    Todos.add({"name" : i, "isChecked": false});
+                    Todos.add({"name" : i.toString(), "isChecked": false});
                     return _buildRow();
                 });
     }
