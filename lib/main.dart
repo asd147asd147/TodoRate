@@ -36,7 +36,6 @@ class _TodoListState extends State<TodoList> {
 
     List<Map> Todos = [];
     final _biggerFont = const TextStyle(fontSize: 18.0);
-
     Widget _buildRow(){
         final test = Todos.map((todo) {
             return CheckboxListTile(
