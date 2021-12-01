@@ -18,17 +18,24 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
-    List<Map> Todos = [];
-    final _biggerFont = const TextStyle(fontSize: 18.0);
-    int _counter = 0;
-    void _incrementCounter() {
-        setState(() {
-                _counter++;
-                _addTodo();
-        });
-        print(_counter);
+    late TextEditingController controller;
+
+    @override
+    void initState(){
+        super.initState();
+
+        controller = TextEditingController();
+    }
+    @override
+    void dispose() {
+        controller.dispose();
+
+        super.dispose();
     }
 
+
+    List<Map> Todos = [];
+    final _biggerFont = const TextStyle(fontSize: 18.0);
     Widget _buildRow(){
         final test = Todos.map((todo) {
             return CheckboxListTile(
@@ -50,7 +57,6 @@ class _TodoListState extends State<TodoList> {
                 padding: const EdgeInsets.all(16.0),
                 itemCount: 1,
                 itemBuilder: (context, i) {
-                    Todos.add({"name" : i.toString(), "isChecked": false});
                     return _buildRow();
                 });
     }
@@ -62,10 +68,36 @@ class _TodoListState extends State<TodoList> {
                         ),
                 body: _addTodo(),
                 floatingActionButton: FloatingActionButton(
-                        onPressed: _incrementCounter,
+                        onPressed: () async {
+                            final name = await openDialog();
+                            if (name == null || name.isEmpty) return;
+                            setState(() {Todos.add({"name" : name, "isChecked": false});});
+                        },
                         tooltip: 'Increment',
                         child: Icon(Icons.add),
                         ),
                 );
+    }
+    
+    Future<String?> openDialog() => showDialog<String>(
+            context: context,
+            builder: (context) => AlertDialog(
+                    title: Text('New Todo'),
+                    content: TextField(
+                            autofocus: true,
+                            decoration: InputDecoration(hintText: 'Enter your todo'),
+                            controller: controller,
+                            ),
+                    actions: [
+                        TextButton(
+                                child: Text('OK'),
+                                onPressed: submit,
+                                ),
+                    ],
+                    ),
+            );
+    void submit() {
+        Navigator.of(context).pop(controller.text);
+        controller.clear();
     }
 }
