@@ -37,8 +37,7 @@ class _TodoListState extends State<TodoList> {
     List<Map> Todos = [];
     final _biggerFont = const TextStyle(fontSize: 18.0);
 
-    Widget _buildRow(){
-        final test = Todos.map((todo) {
+    Widget _buildRow(final todo){
             return CheckboxListTile(
                     title: Text(todo["name"]),
                     value: todo["isChecked"],
@@ -49,16 +48,14 @@ class _TodoListState extends State<TodoList> {
                     },
                     controlAffinity: ListTileControlAffinity.leading,
                     );
-        });
-        return new Column(children: test.toList());
     }
     
     Widget _addTodo() {
         return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: 1,
+                itemCount: Todos.length,
                 itemBuilder: (context, i) {
-                    return _buildRow();
+                    return _buildRow(Todos[i]);
                 });
     }
     @override
