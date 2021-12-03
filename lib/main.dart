@@ -55,7 +55,20 @@ class _TodoListState extends State<TodoList> {
                 padding: const EdgeInsets.all(16.0),
                 itemCount: Todos.length,
                 itemBuilder: (context, i) {
-                    return _buildRow(Todos[i]);
+                    final todo = Todos[i];
+                    return Dismissible(
+                            background: Container(color : Colors.red,),
+                            direction: DismissDirection.startToEnd,
+                            onDismissed: (direction){
+                                setState(() {
+                                    if(direction == DismissDirection.startToEnd){
+                                        Todos.removeAt(i);
+                                    }
+                                });
+                            },
+                            child: _buildRow(todo),
+                            key: Key(todo["name"]),
+                            );
                 });
     }
     @override
