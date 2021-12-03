@@ -55,6 +55,7 @@ class _TodoListState extends State<TodoList> {
                 padding: const EdgeInsets.all(16.0),
                 itemCount: Todos.length,
                 itemBuilder: (context, i) {
+<<<<<<< HEAD
                     final todo = Todos[i];
                     return Dismissible(
                             background: Container(color : Colors.red,),
@@ -69,6 +70,9 @@ class _TodoListState extends State<TodoList> {
                             child: _buildRow(todo),
                             key: Key(todo["name"]),
                             );
+=======
+                    return _buildRow(Todos[i]);
+>>>>>>> 9fda310 (ListView Builder 간단화 및 최적화 (#11))
                 });
     }
     @override
