@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import './todo.dart';
-
 
 void main() => runApp(MyApp());
 
@@ -36,16 +34,16 @@ class _TodoListState extends State<TodoList> {
     }
 
 
-    List<Todo> Todos = [];
+    List<Map> Todos = [];
     final _biggerFont = const TextStyle(fontSize: 18.0);
 
     Widget _buildRow(final todo){
             return CheckboxListTile(
-                    title: Text(todo.name),
-                    value: todo.isChecked,
+                    title: Text(todo["name"]),
+                    value: todo["isChecked"],
                     onChanged: (value) {
                         setState(() {
-                            todo.isChecked = value;
+                            todo["isChecked"] = value;
                         });
                     },
                     controlAffinity: ListTileControlAffinity.leading,
@@ -69,7 +67,7 @@ class _TodoListState extends State<TodoList> {
                                 });
                             },
                             child: _buildRow(todo),
-                            key: Key(todo.name),
+                            key: Key(todo["name"]),
                             );
                 });
     }
@@ -84,7 +82,7 @@ class _TodoListState extends State<TodoList> {
                         onPressed: () async {
                             final name = await openDialog();
                             if (name == null || name.isEmpty) return;
-                            setState(() {Todos.add(Todo(name: name));});
+                            setState(() {Todos.add({"name" : name, "isChecked": false});});
                         },
                         tooltip: 'Increment',
                         child: Icon(Icons.add),
