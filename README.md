@@ -1,4 +1,4 @@
-# flutter todo_list
+# flutter todo_list beta v1.0
 
 A new Flutter project.
 
