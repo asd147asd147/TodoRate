@@ -73,6 +73,8 @@ class _TodoListState extends State<TodoList> {
                             );
                 });
     }
+    
+    String _selectedDate = 'Select Date';
     @override
     Widget build(BuildContext context){
         return Scaffold(
@@ -94,21 +96,57 @@ class _TodoListState extends State<TodoList> {
     
     Future<String?> openDialog() => showDialog<String>(
             context: context,
-            builder: (context) => AlertDialog(
-                    title: Text('New Todo'),
-                    content: TextField(
-                            autofocus: true,
-                            decoration: InputDecoration(hintText: 'Enter your todo'),
-                            controller: controller,
-                            ),
-                    actions: [
-                        TextButton(
-                                child: Text('OK'),
-                                onPressed: submit,
-                                ),
-                    ],
-                    ),
-            );
+            builder: (context) {
+                return StatefulBuilder(
+                        builder: (context, setState){
+                            return AlertDialog(
+                                    title: Text('New Todo'),
+                                    content: SingleChildScrollView(
+                                            child: ListBody(
+                                                    children: [
+                                                        TextField(
+                                                                autofocus: true,
+                                                                decoration: InputDecoration(hintText: 'Enter your todo'),
+                                                                controller: controller,
+                                                        ),
+                                                        RaisedButton(
+                                                                child: Text('$_selectedDate'),
+                                                                onPressed: () {
+                                                                    Future<DateTime?> future = showDatePicker(
+                                                                            context: context,
+                                                                            initialDate: DateTime.now(),
+                                                                            firstDate: DateTime(2018),
+                                                                            lastDate: DateTime(2030),
+                                                                            builder: (BuildContext context, Widget? child) {
+                                                                                return Theme(
+                                                                                        data: ThemeData.light(),
+                                                                                        child: child!,
+                                                                                );
+                                                                            },
+                                                                    );
+
+                                                                future.then((date) {
+                                                                    if(date != null){
+                                                                        setState(() {
+                                                                            _selectedDate = date.toString().substring(0,10);
+                                                                        });
+                                                                    }
+                                                                });
+                                                        }),
+                                                    ],
+                                                ), 
+                                            ),
+                                            actions: [
+                                                TextButton(
+                                                    child: Text('OK'),
+                                                    onPressed: submit,
+                                                ),
+                                            ],
+                                    );
+                        },
+                );
+            },
+    );
     void submit() {
         Navigator.of(context).pop(controller.text);
         controller.clear();
