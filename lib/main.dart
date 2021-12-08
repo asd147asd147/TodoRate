@@ -36,8 +36,7 @@ class _TodoListState extends State<TodoList> {
     }
 
 
-    List<Todo> Todos = [];
-    final _biggerFont = const TextStyle(fontSize: 18.0);
+    Todos todos = new Todos();
 
     Widget _buildRow(final todo){
             return CheckboxListTile(
@@ -55,26 +54,23 @@ class _TodoListState extends State<TodoList> {
     Widget _addTodo() {
         return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: Todos.length,
+                itemCount: todos.todo.length,
                 itemBuilder: (context, i) {
-<<<<<<< HEAD
-                    final todo = Todos[i];
+                    final todo = todos.todo[i];
                     return Dismissible(
                             background: Container(color : Colors.red,),
                             direction: DismissDirection.startToEnd,
                             onDismissed: (direction){
                                 setState(() {
                                     if(direction == DismissDirection.startToEnd){
-                                        Todos.removeAt(i);
+                                        todos.todo.removeAt(i);
                                     }
                                 });
                             },
                             child: _buildRow(todo),
                             key: Key(todo.name),
                             );
-=======
-                    return _buildRow(Todos[i]);
->>>>>>> 9fda310 (ListView Builder 간단화 및 최적화 (#11))
+                    return _buildRow(todos[i]);
                 });
     }
     
@@ -90,7 +86,10 @@ class _TodoListState extends State<TodoList> {
                         onPressed: () async {
                             final name = await openDialog();
                             if (name == null || name.isEmpty) return;
-                            setState(() {Todos.add(Todo(name: name));});
+                            setState(() {
+                                todos.todo.add(Todo(name: name));
+                                print(todos.toJson());
+                            });
                         },
                         tooltip: 'Increment',
                         child: Icon(Icons.add),
