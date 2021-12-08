@@ -70,7 +70,6 @@ class _TodoListState extends State<TodoList> {
                             child: _buildRow(todo),
                             key: Key(todo.name),
                             );
-                    return _buildRow(todos[i]);
                 });
     }
     
@@ -120,7 +119,7 @@ class _TodoListState extends State<TodoList> {
                                                                             initialDate: DateTime.now(),
                                                                             firstDate: DateTime(2018),
                                                                             lastDate: DateTime(2030),
-                                                                            builder: (BuildContext context, Widget? child) {
+                                                                            builder: (BuildContext coUAntext, Widget? child) {
                                                                                 return Theme(
                                                                                         data: ThemeData.light(),
                                                                                         child: child!,
