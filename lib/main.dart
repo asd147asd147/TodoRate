@@ -48,7 +48,7 @@ class _MainWindowState extends State<MainWindow> {
         return FloatingActionButton(
                 onPressed: () {
                     setState((){
-                        todoList.addItem('testMaintance');
+                        todoList.addItem('Test merge pull request');
                     });
                 },
                 tooltip: 'Increment',
