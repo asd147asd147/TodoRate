@@ -19,30 +19,64 @@ class MainWindow extends StatefulWidget {
 }
 
 class _MainWindowState extends State<MainWindow> {
+    late TextEditingController controller;
     TodoList todoList = new TodoList();
+    bool _inputState = false;
+
+    @override
+    void initState(){
+        super.initState();
+        controller = TextEditingController();
+    }
+    @override
+    void dispose(){
+        controller.dispose();
+        super.dispose();
+    }
 
     Widget _bodyListView() {
+        int len = todoList.length;
+        if(_inputState) len++;
         return ListView.builder(
                 padding: const EdgeInsets.all(16.0),
-                itemCount: todoList.length,
+                itemCount: len,
                 itemBuilder: (context, i){
-                    return Dismissible(
-                            background: Container(color : Colors.red,),
-                            direction: DismissDirection.startToEnd,
-                            onDismissed: (direction){
-                                if(direction == DismissDirection.startToEnd){
-                                    setState((){
-                                        todoList.removeItem(i);
-                                    });
-                                }
-                            },
-                            child: _itemSection(todoList.todos[i]),
-                            key: Key(todoList.todos[i].key),
-                    );
+                    if(_inputState && i == len-1){
+                        return Container(
+                                padding: const EdgeInsets.all(10),
+                                child: TextField(
+                                        autofocus: true,
+                                        textInputAction: TextInputAction.go,
+                                        onSubmitted: (String name) {
+                                            _inputState = false;
+                                            setState(() {
+                                                if(name != ''){
+                                                    todoList.addItem(name);
+                                                }
+                                            });
+                                        },
+                                ),
+                        );
+                    }
+                    else{
+                        return Dismissible(
+                                background: Container(color : Colors.red,),
+                                direction: DismissDirection.startToEnd,
+                                onDismissed: (direction){
+                                    if(direction == DismissDirection.startToEnd){
+                                        setState(() {
+                                            todoList.removeItem(i);
+                                        });
+                                    }
+                                },
+                                child: _todoView(todoList.todos[i]),
+                                key: Key(todoList.todos[i].key),
+                        );
+                    }
                 });
     }
 
-    Widget _itemSection(Todo todo) {
+    Widget _todoView(Todo todo) {
         return Container(
                 padding: const EdgeInsets.all(10),
                 child: Row(
@@ -83,8 +117,8 @@ class _MainWindowState extends State<MainWindow> {
     Widget _addTodoButton() { 
         return FloatingActionButton(
                 onPressed: () {
-                    setState((){
-                        todoList.addItem('Test merge pull request');
+                    setState(() {
+                        _inputState = true;
                     });
                 },
                 tooltip: 'Increment',
@@ -94,12 +128,21 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context){
-        return Scaffold(
-                appBar: AppBar(
-                        title: Text('Welcome to TodoList'),
-                ),
-                body: _bodyListView(),
-                floatingActionButton: _addTodoButton(),
+        return GestureDetector(
+                onTap: () {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if(!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                        _inputState = false;
+                    }
+                },
+                child: Scaffold(
+                               appBar: AppBar(
+                                       title: Text('Welcome to TodoList'),
+                               ),
+                               body: _bodyListView(),
+                               floatingActionButton: _addTodoButton(),
+                       ),
         );
     }
 }
