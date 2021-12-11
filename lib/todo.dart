@@ -36,6 +36,7 @@ class Todo {
     String name = '';
     bool isChecked = false;
     String key = UniqueKey().toString();
+    double rate = 0;
 
     Todo(String this.name);
 
