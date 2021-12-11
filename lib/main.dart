@@ -19,30 +19,123 @@ class MainWindow extends StatefulWidget {
 }
 
 class _MainWindowState extends State<MainWindow> {
+    late TextEditingController controller;
     TodoList todoList = new TodoList();
+    bool _inputState = false;
 
-    Widget _bodyListView() {
-        return ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: todoList.length,
-                itemBuilder: (context, i){
-                    return Dismissible(
-                            background: Container(color : Colors.red,),
-                            direction: DismissDirection.startToEnd,
-                            onDismissed: (direction){
-                                if(direction == DismissDirection.startToEnd){
-                                    setState((){
-                                        todoList.removeItem(i);
-                                    });
-                                }
-                            },
-                            child: _itemSection(todoList.todos[i]),
-                            key: Key(todoList.todos[i].key),
-                    );
-                });
+    @override
+    void initState(){
+        super.initState();
+        controller = TextEditingController();
+    }
+    @override
+    void dispose(){
+        controller.dispose();
+        super.dispose();
     }
 
-    Widget _itemSection(Todo todo) {
+    Widget _bodyView() {
+        return Container(
+                margin: const EdgeInsets.only(left: 15, top: 50, right: 15, bottom: 50),
+                decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                        ),
+                        boxShadow: [
+                            BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3)
+                            ),
+                        ],
+                ),
+                child: Column(
+                        children: [
+                            _todoHeader(),
+                            _todoListView(),
+                        ],
+                ),
+                );
+    }
+
+    Widget _todoHeader(){
+        return  Row(
+                children: [
+                    Expanded(
+                            child: Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(10),
+                                                    topRight: Radius.circular(10),
+                                            ),
+                                    ),
+                                    child: Text(
+                                            '2021-12-31',
+                                            style: TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                    ),
+                            ),
+                    ),
+                    ],
+                    );
+    }
+
+    Widget _todoListView(){
+        int len = todoList.length;
+        if(_inputState) len++;
+        return Expanded(
+                child: ListView.builder(
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: len,
+                        itemBuilder: (context, i){
+                            if(_inputState && i == len-1){
+                                return Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: TextField(
+                                                autofocus: true,
+                                                textInputAction: TextInputAction.go,
+                                                onSubmitted: (String name) {
+                                                    _inputState = false;
+                                                    setState(() {
+                                                        if(name != ''){
+                                                            todoList.addItem(name);
+                                                        }
+                                                    });
+                                                },
+                                        ),
+                                );
+                            }
+                            else{
+                                return Dismissible(
+                                        background: Container(color : Colors.red,),
+                                        direction: DismissDirection.startToEnd,
+                                        onDismissed: (direction){
+                                            if(direction == DismissDirection.startToEnd){
+                                                setState(() {
+                                                    todoList.removeItem(i);
+                                                });
+                                            }
+                                        },
+                                        child: _todoView(todoList.todos[i]),
+                                        key: Key(todoList.todos[i].key),
+                                );
+                            }
+                        }),
+                        );
+    }
+
+    Widget _todoView(Todo todo) {
         return Container(
                 padding: const EdgeInsets.all(10),
                 child: Row(
@@ -83,8 +176,8 @@ class _MainWindowState extends State<MainWindow> {
     Widget _addTodoButton() { 
         return FloatingActionButton(
                 onPressed: () {
-                    setState((){
-                        todoList.addItem('Test merge pull request');
+                    setState(() {
+                        _inputState = true;
                     });
                 },
                 tooltip: 'Increment',
@@ -94,12 +187,21 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context){
-        return Scaffold(
-                appBar: AppBar(
-                        title: Text('Welcome to TodoList'),
-                ),
-                body: _bodyListView(),
-                floatingActionButton: _addTodoButton(),
+        return GestureDetector(
+                onTap: () {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if(!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                        _inputState = false;
+                    }
+                },
+                child: Scaffold(
+                               appBar: AppBar(
+                                       title: Text('Welcome to TodoList'),
+                               ),
+                               body: _bodyView(),
+                               floatingActionButton: _addTodoButton(),
+                       ),
         );
     }
 }
