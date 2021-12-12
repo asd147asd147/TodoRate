@@ -1,156 +1,207 @@
 import 'package:flutter/material.dart';
 import './todo.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return MaterialApp(
-            title: 'My Flutter Todo List',
-            home: TodoList(),
+                title: 'My Flutter Todo List',
+                home: MainWindow(),
         );
     }
 }
 
-class TodoList extends StatefulWidget {
+class MainWindow extends StatefulWidget {
     @override
-    _TodoListState createState() => _TodoListState();
+    _MainWindowState createState() => _MainWindowState();
 }
 
-class _TodoListState extends State<TodoList> {
+class _MainWindowState extends State<MainWindow> {
     late TextEditingController controller;
+    TodoList todoList = new TodoList();
+    bool _inputState = false;
 
     @override
     void initState(){
         super.initState();
-
         controller = TextEditingController();
     }
     @override
-    void dispose() {
+    void dispose(){
         controller.dispose();
-
         super.dispose();
     }
 
+    Widget _bodyView() {
+        return Container(
+                margin: const EdgeInsets.only(left: 15, top: 50, right: 15, bottom: 50),
+                decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                        ),
+                        boxShadow: [
+                            BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3)
+                            ),
+                        ],
+                ),
+                child: Column(
+                        children: [
+                            _todoHeader(),
+                            _todoListView(),
+                        ],
+                ),
+                );
+    }
 
-    Todos todos = new Todos();
-
-    Widget _buildRow(final todo){
-            return CheckboxListTile(
-                    title: Text(todo.name),
-                    value: todo.isChecked,
-                    onChanged: (value) {
-                        setState(() {
-                            todo.isChecked = value;
-                        });
-                    },
-                    controlAffinity: ListTileControlAffinity.leading,
+    Widget _todoHeader(){
+        return  Row(
+                children: [
+                    Expanded(
+                            child: Container(
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                            color: Colors.blue,
+                                            borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(10),
+                                                    topRight: Radius.circular(10),
+                                            ),
+                                    ),
+                                    child: Text(
+                                            '2021-12-31',
+                                            style: TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                    ),
+                            ),
+                    ),
+                    ],
                     );
     }
-    
-    Widget _addTodo() {
-        return ListView.builder(
-                padding: const EdgeInsets.all(16.0),
-                itemCount: todos.todo.length,
-                itemBuilder: (context, i) {
-                    final todo = todos.todo[i];
-                    return Dismissible(
-                            background: Container(color : Colors.red,),
-                            direction: DismissDirection.startToEnd,
-                            onDismissed: (direction){
-                                setState(() {
-                                    if(direction == DismissDirection.startToEnd){
-                                        todos.todo.removeAt(i);
-                                    }
-                                });
-                            },
-                            child: _buildRow(todo),
-                            key: Key(todo.name),
-                            );
-                });
-    }
-    
-    String _selectedDate = 'Select Date';
-    @override
-    Widget build(BuildContext context){
-        return Scaffold(
-                appBar: AppBar(
-                        title: Text('Welcom to TodoList'),
-                        ),
-                body: _addTodo(),
-                floatingActionButton: FloatingActionButton(
-                        onPressed: () async {
-                            final name = await openDialog();
-                            if (name == null || name.isEmpty) return;
-                            setState(() {
-                                todos.todo.add(Todo(name: name));
-                                print(todos.toJson());
-                            });
-                        },
-                        tooltip: 'Increment',
-                        child: Icon(Icons.add),
-                        ),
-                );
-    }
-    
-    Future<String?> openDialog() => showDialog<String>(
-            context: context,
-            builder: (context) {
-                return StatefulBuilder(
-                        builder: (context, setState){
-                            return AlertDialog(
-                                    title: Text('New Todo'),
-                                    content: SingleChildScrollView(
-                                            child: ListBody(
-                                                    children: [
-                                                        TextField(
-                                                                autofocus: true,
-                                                                decoration: InputDecoration(hintText: 'Enter your todo'),
-                                                                controller: controller,
-                                                        ),
-                                                        RaisedButton(
-                                                                child: Text('$_selectedDate'),
-                                                                onPressed: () {
-                                                                    Future<DateTime?> future = showDatePicker(
-                                                                            context: context,
-                                                                            initialDate: DateTime.now(),
-                                                                            firstDate: DateTime(2018),
-                                                                            lastDate: DateTime(2030),
-                                                                            builder: (BuildContext coUAntext, Widget? child) {
-                                                                                return Theme(
-                                                                                        data: ThemeData.light(),
-                                                                                        child: child!,
-                                                                                );
-                                                                            },
-                                                                    );
 
-                                                                future.then((date) {
-                                                                    if(date != null){
-                                                                        setState(() {
-                                                                            _selectedDate = date.toString().substring(0,10);
-                                                                        });
-                                                                    }
-                                                                });
-                                                        }),
-                                                    ],
-                                                ), 
-                                            ),
-                                            actions: [
-                                                TextButton(
-                                                    child: Text('OK'),
-                                                    onPressed: submit,
+    Widget _todoListView(){
+        int len = todoList.length;
+        if(_inputState) len++;
+        return Expanded(
+                child: ListView.builder(
+                        padding: const EdgeInsets.all(16.0),
+                        itemCount: len,
+                        itemBuilder: (context, i){
+                            if(_inputState && i == len-1){
+                                return Container(
+                                        padding: const EdgeInsets.all(10),
+                                        child: TextField(
+                                                autofocus: true,
+                                                textInputAction: TextInputAction.go,
+                                                onSubmitted: (String name) {
+                                                    _inputState = false;
+                                                    setState(() {
+                                                        if(name != ''){
+                                                            todoList.addItem(name);
+                                                        }
+                                                    });
+                                                },
+                                        ),
+                                );
+                            }
+                            else{
+                                return Dismissible(
+                                        background: Container(color : Colors.red,),
+                                        direction: DismissDirection.startToEnd,
+                                        onDismissed: (direction){
+                                            if(direction == DismissDirection.startToEnd){
+                                                setState(() {
+                                                    todoList.removeItem(i);
+                                                });
+                                            }
+                                        },
+                                        child: _todoView(todoList.todos[i]),
+                                        key: Key(todoList.todos[i].key),
+                                );
+                            }
+                        }),
+                        );
+    }
+
+    Widget _todoView(Todo todo) {
+        return Container(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                        children: [
+                            Expanded(
+                                    child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                                Container(
+                                                        padding: const EdgeInsets.only(bottom: 8),
+                                                        child: Text(todo.name),
+                                                ),
+                                                SliderTheme(
+                                                        data: SliderTheme.of(context).copyWith(
+                                                            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 4.0),
+                                                            overlayShape: RoundSliderOverlayShape(overlayRadius: 14.0),
+                                                        ),
+                                                        child : Slider(
+                                                                value: todo.rate,
+                                                                max: 100,
+                                                                divisions: 100,
+                                                                label: todo.rate.round().toString(),
+                                                                onChanged: (double value){
+                                                                    setState(() {
+                                                                        todo.rate = value;
+                                                                    });
+                                                                }
+                                                        ),
                                                 ),
                                             ],
-                                    );
-                        },
-                );
-            },
-    );
-    void submit() {
-        Navigator.of(context).pop(controller.text);
-        controller.clear();
+                                    ),
+                            ),
+                        ],
+                ),
+        );
+    }
+
+    Widget _addTodoButton() { 
+        return FloatingActionButton(
+                onPressed: () {
+                    setState(() {
+                        _inputState = true;
+                    });
+                },
+                tooltip: 'Increment',
+                child: Icon(Icons.add),
+        );
+    }
+
+    @override
+    Widget build(BuildContext context){
+        return GestureDetector(
+                onTap: () {
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if(!currentFocus.hasPrimaryFocus) {
+                        currentFocus.unfocus();
+                        _inputState = false;
+                    }
+                },
+                child: Scaffold(
+                               appBar: AppBar(
+                                       title: Text('Welcome to TodoList'),
+                               ),
+                               body: _bodyView(),
+                               floatingActionButton: _addTodoButton(),
+                       ),
+        );
     }
 }
