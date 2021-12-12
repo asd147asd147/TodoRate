@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './todo.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,189 +19,51 @@ class MainWindow extends StatefulWidget {
 }
 
 class _MainWindowState extends State<MainWindow> {
-    late TextEditingController controller;
-    TodoList todoList = new TodoList();
-    bool _inputState = false;
 
-    @override
-    void initState(){
-        super.initState();
-        controller = TextEditingController();
+    Widget _mainBodyView(){
+        return _buildTableCalendar();
     }
-    @override
-    void dispose(){
-        controller.dispose();
-        super.dispose();
-    }
-
-    Widget _bodyView() {
-        return Container(
-                margin: const EdgeInsets.only(left: 15, top: 50, right: 15, bottom: 50),
-                decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                topRight: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
-                        ),
-                        boxShadow: [
-                            BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 5,
-                                    blurRadius: 7,
-                                    offset: Offset(0, 3)
-                            ),
-                        ],
+    Widget _buildTableCalendar() {
+        return TableCalendar(
+                focusedDay: DateTime.now(),
+                firstDay: DateTime.utc(2010,1,1),
+                lastDay: DateTime.utc(2030,12,31),
+                //onHeaderTapped: _onHeaderTapped,
+                headerStyle: HeaderStyle(
+                        headerMargin: EdgeInsets.only(left: 40, top: 10, right: 40, bottom: 10),
+                        titleCentered: true,
+                        formatButtonVisible: false,
+                        leftChevronIcon: Icon(Icons.arrow_left),
+                        rightChevronIcon: Icon(Icons.arrow_right),
+                        titleTextStyle: const TextStyle(fontSize: 17.0),
                 ),
-                child: Column(
-                        children: [
-                            _todoHeader(),
-                            _todoListView(),
-                        ],
+                calendarStyle: CalendarStyle(
+                        outsideDaysVisible: true,
+                        weekendTextStyle: TextStyle().copyWith(color: Colors.red),
+                        holidayTextStyle: TextStyle().copyWith(color: Colors.blue[800]),
                 ),
+                //locale: 'ko-KR',
+                //events: _events,
+                //holidays: _holidays,
+                //availableCalendarFormats: _availableCalendarFormats,
+                //calendarController: _calendarController,
+                //builders: calendarBuilder(),
+                /*onDaySelected: (date, events, holidays) {
+                    _onDaySelected(date, events, holidays);
+                    _animationController.forward(from: 0.0);
+                },*/
+                //onVisibleDaysChanged: _onVisibleDaysChanged,
+                //onCalendarCreated: _onCalendarCreated,
                 );
-    }
-
-    Widget _todoHeader(){
-        return  Row(
-                children: [
-                    Expanded(
-                            child: Container(
-                                    padding: EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                            color: Colors.blue,
-                                            borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(10),
-                                                    topRight: Radius.circular(10),
-                                            ),
-                                    ),
-                                    child: Text(
-                                            '2021-12-31',
-                                            style: TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                            ),
-                                            textAlign: TextAlign.left,
-                                    ),
-                            ),
-                    ),
-                    ],
-                    );
-    }
-
-    Widget _todoListView(){
-        int len = todoList.length;
-        if(_inputState) len++;
-        return Expanded(
-                child: ListView.builder(
-                        padding: const EdgeInsets.all(16.0),
-                        itemCount: len,
-                        itemBuilder: (context, i){
-                            if(_inputState && i == len-1){
-                                return Container(
-                                        padding: const EdgeInsets.all(10),
-                                        child: TextField(
-                                                autofocus: true,
-                                                textInputAction: TextInputAction.go,
-                                                onSubmitted: (String name) {
-                                                    _inputState = false;
-                                                    setState(() {
-                                                        if(name != ''){
-                                                            todoList.addItem(name);
-                                                        }
-                                                    });
-                                                },
-                                        ),
-                                );
-                            }
-                            else{
-                                return Dismissible(
-                                        background: Container(color : Colors.red,),
-                                        direction: DismissDirection.startToEnd,
-                                        onDismissed: (direction){
-                                            if(direction == DismissDirection.startToEnd){
-                                                setState(() {
-                                                    todoList.removeItem(i);
-                                                });
-                                            }
-                                        },
-                                        child: _todoView(todoList.todos[i]),
-                                        key: Key(todoList.todos[i].key),
-                                );
-                            }
-                        }),
-                        );
-    }
-
-    Widget _todoView(Todo todo) {
-        return Container(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                        children: [
-                            Expanded(
-                                    child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                                Container(
-                                                        padding: const EdgeInsets.only(bottom: 8),
-                                                        child: Text(todo.name),
-                                                ),
-                                                SliderTheme(
-                                                        data: SliderTheme.of(context).copyWith(
-                                                            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 4.0),
-                                                            overlayShape: RoundSliderOverlayShape(overlayRadius: 14.0),
-                                                        ),
-                                                        child : Slider(
-                                                                value: todo.rate,
-                                                                max: 100,
-                                                                divisions: 100,
-                                                                label: todo.rate.round().toString(),
-                                                                onChanged: (double value){
-                                                                    setState(() {
-                                                                        todo.rate = value;
-                                                                    });
-                                                                }
-                                                        ),
-                                                ),
-                                            ],
-                                    ),
-                            ),
-                        ],
-                ),
-        );
-    }
-
-    Widget _addTodoButton() { 
-        return FloatingActionButton(
-                onPressed: () {
-                    setState(() {
-                        _inputState = true;
-                    });
-                },
-                tooltip: 'Increment',
-                child: Icon(Icons.add),
-        );
     }
 
     @override
     Widget build(BuildContext context){
-        return GestureDetector(
-                onTap: () {
-                    FocusScopeNode currentFocus = FocusScope.of(context);
-                    if(!currentFocus.hasPrimaryFocus) {
-                        currentFocus.unfocus();
-                        _inputState = false;
-                    }
-                },
-                child: Scaffold(
-                               appBar: AppBar(
-                                       title: Text('Welcome to TodoList'),
-                               ),
-                               body: _bodyView(),
-                               floatingActionButton: _addTodoButton(),
-                       ),
+        return Scaffold(
+                appBar: AppBar(
+                        title: Text('Welcome to TodoList'),
+                ),
+                body: _mainBodyView(),
         );
     }
 }
