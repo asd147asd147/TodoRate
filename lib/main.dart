@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'; 
 import 'package:table_calendar/table_calendar.dart';
 
 void main() => runApp(MyApp());
@@ -8,6 +9,13 @@ class MyApp extends StatelessWidget {
     Widget build(BuildContext context) {
         return MaterialApp(
                 title: 'My Flutter Todo List',
+                localizationsDelegates: [
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                ],
+                supportedLocales: [
+                    const Locale('ko', 'KR'),
+                ],
                 home: MainWindow(),
         );
     }
@@ -38,11 +46,9 @@ class _MainWindowState extends State<MainWindow> {
                         titleTextStyle: const TextStyle(fontSize: 17.0),
                 ),
                 calendarStyle: CalendarStyle(
-                        outsideDaysVisible: true,
-                        weekendTextStyle: TextStyle().copyWith(color: Colors.red),
-                        holidayTextStyle: TextStyle().copyWith(color: Colors.blue[800]),
+                        outsideDaysVisible: false,
                 ),
-                //locale: 'ko-KR',
+                locale: 'ko-KR',
                 //events: _events,
                 //holidays: _holidays,
                 //availableCalendarFormats: _availableCalendarFormats,
