@@ -27,7 +27,6 @@ class MainWindow extends StatefulWidget {
 }
 
 class _MainWindowState extends State<MainWindow> {
-
     MainCalendar mainCalendar = MainCalendar();
     Widget _mainBodyView(){
         return mainCalendar;
