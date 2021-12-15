@@ -75,11 +75,11 @@ class _MainCalendarState extends State<MainCalendar> {
                             margin: const EdgeInsets.all(4.0),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                                    color: Colors.orange,
+                                    color: Colors.blue,
                                     borderRadius: BorderRadius.circular(10.0)),
                             child: Text(
                                     date.day.toString(),
-                                    style: TextStyle(color: Colors.blue),
+                                    style: TextStyle(color: Colors.white),
                             ));
                 },
                 todayBuilder: (context, date, events) {
@@ -93,10 +93,34 @@ class _MainCalendarState extends State<MainCalendar> {
                                     date.day.toString(),
                                     style: TextStyle(color: Colors.white),
                             ));
-                }
+                },
+                defaultBuilder: (context, date, _) {
+                    return Container(
+                            margin: const EdgeInsets.all(4.0),
+                            padding: const EdgeInsets.only(top: 4.0),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+
+                            ),
+                            child: Column(
+                                    children: [
+                                        Container(
+                                                height: 20,
+                                                width: 20,
+                                                decoration: BoxDecoration(
+                                                        color: Colors.green,
+                                                        borderRadius: BorderRadius.circular(2.0)),
+                                        ),
+                                        Text(
+                                                date.day.toString(),
+                                                style: TextStyle(color: Colors.black),
+                                        ),
+                                    ],
+                            ));
+                },
         );
     }
-    
+
     @override
     Widget build(BuildContext context) {
         return buildTableCalendar();
