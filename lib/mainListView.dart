@@ -28,9 +28,9 @@ List<Item> generateItems(int numberOfItems) {
 }
 
 class _MainListViewState extends State<MainListView> {
+    final List<Item> _data = generateItems(8);
 
     Widget _buildPanel() {
-        final List<Item> _data = generateItems(8);
         return ExpansionPanelList(
                 expansionCallback: (int index, bool isExpanded) {
                     setState((){

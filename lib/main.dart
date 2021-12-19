@@ -28,14 +28,9 @@ class MainWindow extends StatefulWidget {
 }
 
 class _MainWindowState extends State<MainWindow> {
-<<<<<<< HEAD
-    MainCalendar mainCalendar = MainCalendar();
-=======
-
     Widget mainCalendar = MainCalendar();
     Widget mainListView = MainListView();
 
->>>>>>> 8a3fa2c (Add expansion listview in main window, but not working expansion panel)
     Widget _mainBodyView(){
         return SingleChildScrollView(
                 child: Column(
