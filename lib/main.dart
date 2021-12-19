@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
 import './calendar.dart';
+import './mainListView.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,9 +28,22 @@ class MainWindow extends StatefulWidget {
 }
 
 class _MainWindowState extends State<MainWindow> {
+<<<<<<< HEAD
     MainCalendar mainCalendar = MainCalendar();
+=======
+
+    Widget mainCalendar = MainCalendar();
+    Widget mainListView = MainListView();
+
+>>>>>>> 8a3fa2c (Add expansion listview in main window, but not working expansion panel)
     Widget _mainBodyView(){
-        return mainCalendar;
+        return SingleChildScrollView(
+                child: Column(
+                        children: [
+                            mainCalendar,
+                            mainListView,
+                        ],),
+        );
     }
 
     @override
