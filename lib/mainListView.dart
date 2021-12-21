@@ -10,11 +10,13 @@ class Item {
     Item({
         required this.expandedValue,
         required this.headerValue,
-        this.isExpanded = false,
+        this.itemValue = 0,
+        this.isExpanded = true,
     });
 
     String expandedValue;
     String headerValue;
+    double itemValue;
     bool isExpanded;
 }
 
@@ -54,10 +56,7 @@ class _MainListViewState extends State<MainListView> {
                                                   });
                                               }
                                           },
-                                          child: ListTile(
-                                                         title: Text(item.expandedValue),
-                                                         subtitle: const Text('To delete this panel'),
-                                                 ),
+                                          child: _todoUnit(item),
                                           key: Key(UniqueKey().toString()),
                                   ),
                     isExpanded: item.isExpanded,
@@ -65,6 +64,35 @@ class _MainListViewState extends State<MainListView> {
                 }).toList(),
                 );
     }
+    double _value = 0.0;
+
+    Widget _todoUnit(Item item){
+        return Column(
+                children: [
+                    ListTile(
+                            title: Text(item.expandedValue),
+                            subtitle: const Text('To delete this panel'),
+                    ),
+                    SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 4.0),
+                                    overlayShape: RoundSliderOverlayShape(overlayRadius: 14.0),
+                            ),
+                            child : Slider(
+                                    value: _value,
+                                    max: 100,
+                                    divisions: 100,
+                                    label: _value.round().toString(),
+                                    onChanged: (double value){
+                                        setState(() {
+                                            _value = value;
+                                        });
+                                    }
+                            ),
+                    ),
+                    ]);
+    }
+
 
     @override
     Widget build(BuildContext context) {
