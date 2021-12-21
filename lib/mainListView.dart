@@ -44,17 +44,23 @@ class _MainListViewState extends State<MainListView> {
                                         title: Text(item.headerValue),
                                 );
                             },
-                            body: ListTile(
-                                          title: Text(item.expandedValue),
-                                          subtitle:
-                                          const Text('To delete this panel'),
-                                          trailing: const Icon(Icons.delete),
-                                          onTap: () {
-                                              setState(() {
-                                                  _data.removeWhere((Item currentItem) => item == currentItem);
-                                              });
-                                          }),
-                            isExpanded: item.isExpanded,
+                            body: Dismissible(
+                                          background: Container(color : Colors.red,),
+                                          direction: DismissDirection.startToEnd,
+                                          onDismissed: (direction){
+                                              if(direction == DismissDirection.startToEnd){
+                                                  setState(() {
+                                                      _data.removeWhere((Item currentItem) => item == currentItem);
+                                                  });
+                                              }
+                                          },
+                                          child: ListTile(
+                                                         title: Text(item.expandedValue),
+                                                         subtitle: const Text('To delete this panel'),
+                                                 ),
+                                          key: Key(UniqueKey().toString()),
+                                  ),
+                    isExpanded: item.isExpanded,
                     );
                 }).toList(),
                 );
