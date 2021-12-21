@@ -46,7 +46,8 @@ class _MainListViewState extends State<MainListView> {
                                         title: Text(item.headerValue),
                                 );
                             },
-                            body: Dismissible(
+                            body: _todoUnit(item),
+                            /*Dismissible(
                                           background: Container(color : Colors.red,),
                                           direction: DismissDirection.startToEnd,
                                           onDismissed: (direction){
@@ -58,7 +59,7 @@ class _MainListViewState extends State<MainListView> {
                                           },
                                           child: _todoUnit(item),
                                           key: Key(UniqueKey().toString()),
-                                  ),
+                                  ),*/
                     isExpanded: item.isExpanded,
                     );
                 }).toList(),
@@ -87,6 +88,9 @@ class _MainListViewState extends State<MainListView> {
                                         setState(() {
                                             _value = value;
                                         });
+                                    },
+                                    onChangeEnd: (double value){
+                                        print(value);
                                     }
                             ),
                     ),
