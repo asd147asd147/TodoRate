@@ -23,8 +23,8 @@ class Item {
 List<Item> generateItems(int numberOfItems) {
     return List<Item>.generate(numberOfItems, (int index) {
         return Item(
-                headerValue: 'Panel $index',
-                expandedValue: 'This is item number $index',
+                headerValue: 'Category $index',
+                expandedValue: 'This is todo number $index',
         );
     });
 }
@@ -110,8 +110,24 @@ class _MainListViewState extends State<MainListView> {
     @override
     Widget build(BuildContext context) {
         return SingleChildScrollView(
-                child: Container(
-                        child: _buildPanel(),
+                child: Column(
+                        children: [
+                            Divider(),
+                            Container(
+                                    margin: EdgeInsets.all(5),
+                                    height: 10,
+                                    child:  ClipRRect(
+                                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                                            child: LinearProgressIndicator(
+                                                    value: 0.4522,
+                                                    backgroundColor: Colors.grey,
+                                            ),
+                                    ),
+                            ),
+                            Divider(),
+                            Container(
+                                    child: _buildPanel(),
+                            ),],
                 ),
         );
     }
