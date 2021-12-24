@@ -108,7 +108,7 @@ class _MainCalendarState extends State<MainCalendar> {
                                                 height: 20,
                                                 width: 20,
                                                 decoration: BoxDecoration(
-                                                        color: Colors.green,
+                                                        color: Colors.red,
                                                         borderRadius: BorderRadius.circular(2.0)),
                                         ),
                                         Text(
