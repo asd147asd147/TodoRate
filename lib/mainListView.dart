@@ -11,7 +11,7 @@ class Category {
         required this.headerValue,
         required this.itemList,
         this.categoryValue = 0,
-        this.isExpanded = false,
+        this.isExpanded = true,
     });
 
     String headerValue;
@@ -34,7 +34,7 @@ List<Category> generateCategory(int numberOfCategory) {
     return List<Category>.generate(numberOfCategory, (int index) {
         return Category(
             headerValue: 'Category $index',
-            itemList: generateItems(3),
+            itemList: generateItems(2),
         );
     });
 }
@@ -51,6 +51,7 @@ class _MainListViewState extends State<MainListView> {
     final List<Category> _data = generateCategory(4);
 
     Widget _buildPanel() {
+        int category_index = 0;
         return ExpansionPanelList(
                 expandedHeaderPadding: const EdgeInsets.all(0.0),
                 expansionCallback: (int index, bool isExpanded) {
@@ -62,35 +63,46 @@ class _MainListViewState extends State<MainListView> {
                     return ExpansionPanel(
                             canTapOnHeader: true,
                             headerBuilder: (BuildContext context, bool isExpanded) {
-                                return Row(
-                                        children: [
-                                            Expanded(
-                                                    child: ListTile(
-                                                            title: Text(category.headerValue),
-                                                    ),
-                                            ),
-                                            IconButton(
-                                                    onPressed: () {},
-                                                    icon: Icon(Icons.add),
-                                            ),
-                                        ],
+                                return ListTile(
+                                        title: Text(category.headerValue),
                                 );
                             },
-                            body: _todoUnit(category.itemList),
-                    isExpanded: category.isExpanded,
+                            body: _todoUnit(category.itemList, category_index++),
+                            isExpanded: category.isExpanded,
                     );
                 }).toList(),
                 );
     }
 
-    Widget _todoUnit(List<Item> itemList){
+    Widget _todoAdd(int index){
+        return Container(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                child: Center(
+                        child: ElevatedButton.icon(
+                                icon: Icon(Icons.add),
+                                label: Text('Add'),
+                                onPressed: () {
+                                    setState(() {
+                                        _data[index].itemList.add(Item(expandedValue: 'New Todo'));
+                                    });
+                                },
+                        ),
+                ),
+        );
+    }
+
+    Widget _todoUnit(List<Item> itemList, int category_index){
         return ListView.builder(
+                padding: const EdgeInsets.only(bottom: 0.0),
                 physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: itemList.length,
+                itemCount: itemList.length+1,
                 itemBuilder: (BuildContext context, int index){
+                    if(index == itemList.length){
+                        return _todoAdd(category_index);
+                    }
                     return Container(
-                            padding: const EdgeInsets.all(1.0),
+                            padding: const EdgeInsets.only(bottom: 2.0),
                             child: Column(
                                     children: [ 
                                     Divider(),
