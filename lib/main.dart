@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
                 title: 'My Flutter Todo List',
                 localizationsDelegates: [
                     GlobalMaterialLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
                     GlobalWidgetsLocalizations.delegate,
                 ],
                 supportedLocales: [
@@ -43,11 +44,16 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context) {
-        return Scaffold(
-                appBar: AppBar(
-                        title: Text('Welcome to TodoList'),
+        return GestureDetector(
+                onTap: () {
+                    FocusScope.of(context).unfocus();
+                },
+                child: Scaffold(
+                        appBar: AppBar(
+                                title: Text('Welcome to TodoList'),
+                        ),
+                        body: _mainBodyView(),
                 ),
-                body: _mainBodyView(),
         );
     }
 }
