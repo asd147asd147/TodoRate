@@ -6,48 +6,67 @@ class MainListView extends StatefulWidget {
     _MainListViewState createState() => _MainListViewState();
 }
 
-class Item {
-    Item({
-        required this.expandedValue,
+class Category {
+    Category({
         required this.headerValue,
-        this.itemValue = 0,
+        required this.itemList,
+        this.categoryValue = 0,
         this.isExpanded = false,
     });
 
-    String expandedValue;
     String headerValue;
-    double itemValue;
+    double categoryValue;
     bool isExpanded;
+    List<Item> itemList;
+}
+
+class Item {
+    Item({
+        required this.expandedValue,
+        this.itemValue = 0,
+    });
+
+    String expandedValue;
+    double itemValue;
+}
+
+List<Category> generateCategory(int numberOfCategory) {
+    return List<Category>.generate(numberOfCategory, (int index) {
+        return Category(
+            headerValue: 'Category $index',
+            itemList: generateItems(3),
+        );
+    });
 }
 
 List<Item> generateItems(int numberOfItems) {
     return List<Item>.generate(numberOfItems, (int index) {
         return Item(
-                headerValue: 'Category $index',
                 expandedValue: 'This is todo number $index',
         );
     });
 }
 
 class _MainListViewState extends State<MainListView> {
-    final List<Item> _data = generateItems(8);
+    final List<Category> _data = generateCategory(4);
 
     Widget _buildPanel() {
         return ExpansionPanelList(
-                //expandedHeaderPadding: const EdgeInsets.all(30.0),
+                expandedHeaderPadding: const EdgeInsets.all(0.0),
                 expansionCallback: (int index, bool isExpanded) {
                     setState((){
                         _data[index].isExpanded = !isExpanded;
                     });
                 },
-                children: _data.map<ExpansionPanel>((Item item) {
+                children: _data.map<ExpansionPanel>((Category category) {
                     return ExpansionPanel(
+                            canTapOnHeader: true,
                             headerBuilder: (BuildContext context, bool isExpanded) {
                                 return Row(
                                         children: [
                                             Expanded(
                                                     child: ListTile(
-                                                            title: Text(item.headerValue),
+                                                            title: Text(category.headerValue),
                                                     ),
                                             ),
                                             IconButton(
@@ -57,55 +76,62 @@ class _MainListViewState extends State<MainListView> {
                                         ],
                                 );
                             },
-                            body: _todoUnit(item),
-                    isExpanded: item.isExpanded,
+                            body: _todoUnit(category.itemList),
+                    isExpanded: category.isExpanded,
                     );
                 }).toList(),
                 );
     }
 
-    Widget _todoUnit(Item item){
-        return Container(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                        children: [ 
-                        Dismissible(
-                                background: Container(color : Colors.red,),
-                                direction: DismissDirection.startToEnd,
-                                onDismissed: (direction){
-                                    if(direction == DismissDirection.startToEnd){
-                                        setState(() {
-                                            _data.removeWhere((Item currentItem) => item == currentItem);
-                                        });
-                                    }
-                                },
-                                child: ListTile(
-                                               title: Text(item.expandedValue),
-                                               subtitle: const Text('To delete this panel'),
-                                       ),
-                                key: Key(UniqueKey().toString()),
-                        ),
-                        SliderTheme(
-                                data: SliderTheme.of(context).copyWith(
-                                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 4.0),
-                                        overlayShape: RoundSliderOverlayShape(overlayRadius: 14.0),
-                                ),
-                                child : Slider(
-                                        value: item.itemValue,
-                                        max: 100,
-                                        divisions: 20,
-                                        label: item.itemValue.round().toString(),
-                                        onChanged: (double value){
-                                            setState(() {
-                                                item.itemValue = value;
-                                            });
-                                        },
-                                ),
-                        ),
-                        ]),
-                        );
+    Widget _todoUnit(List<Item> itemList){
+        return ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: itemList.length,
+                itemBuilder: (BuildContext context, int index){
+                    return Container(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Column(
+                                    children: [ 
+                                    Divider(),
+                                    Row(
+                                            children: [
+                                                Expanded(
+                                                        child: ListTile(
+                                                                title: Text(itemList[index].expandedValue),
+                                                        ),
+                                                ),
+                                                IconButton(
+                                                        onPressed: () {
+                                                            setState(() {
+                                                                itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
+                                                            });
+                                                        },
+                                                        icon: Icon(Icons.delete),
+                                                ),
+                                            ],
+                                    ),
+                                    SliderTheme(
+                                            data: SliderTheme.of(context).copyWith(
+                                                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 4.0),
+                                                    overlayShape: RoundSliderOverlayShape(overlayRadius: 14.0),
+                                            ),
+                                            child : Slider(
+                                                    value: itemList[index].itemValue,
+                                                    max: 100,
+                                                    divisions: 20,
+                                                    label: itemList[index].itemValue.round().toString(),
+                                                    onChanged: (double value){
+                                                        setState(() {
+                                                            itemList[index].itemValue = value;
+                                                        });
+                                                    },
+                                            ),
+                                    ),
+                                    ]),
+                                    );                   
+                });
     }
-
 
     @override
     Widget build(BuildContext context) {
@@ -127,7 +153,8 @@ class _MainListViewState extends State<MainListView> {
                             Divider(),
                             Container(
                                     child: _buildPanel(),
-                            ),],
+                            ),
+                        ],
                 ),
         );
     }
