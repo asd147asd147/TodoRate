@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class MainListView extends StatefulWidget {
     @override
     _MainListViewState createState() => _MainListViewState();
+}
+
+class DayTodo {
+    DayTodo({
+        required this.categoryList,
+        this.dayValue = 0,
+    });
+
+    List<Category> categoryList;
+    double dayValue;
 }
 
 class Category {
@@ -11,7 +22,7 @@ class Category {
         required this.headerValue,
         required this.itemList,
         this.categoryValue = 0,
-        this.isExpanded = true,
+        this.isExpanded = false,
     });
 
     String headerValue;
@@ -53,7 +64,7 @@ class _MainListViewState extends State<MainListView> {
     late TextEditingController _editingController;
     late Item _editingItem;
     final focusNode = FocusNode();
-    final List<Category> _data = generateCategory(4);
+    final DayTodo _dayTodo = DayTodo(categoryList: generateCategory(4));
 
     @override
     void initState() {
@@ -82,15 +93,22 @@ class _MainListViewState extends State<MainListView> {
                 expandedHeaderPadding: const EdgeInsets.all(0.0),
                 expansionCallback: (int index, bool isExpanded) {
                     setState((){
-                        _data[index].isExpanded = !isExpanded;
+                        _dayTodo.categoryList[index].isExpanded = !isExpanded;
                     });
                 },
-                children: _data.map<ExpansionPanel>((Category category) {
+                children: _dayTodo.categoryList.map<ExpansionPanel>((Category category) {
                     return ExpansionPanel(
                             canTapOnHeader: true,
                             headerBuilder: (BuildContext context, bool isExpanded) {
                                 return ListTile(
                                         title: Text(category.headerValue),
+                                        subtitle: ClipRRect(
+                                                borderRadius: BorderRadius.all(Radius.circular(4)),
+                                                child: LinearProgressIndicator(
+                                                        value: category.categoryValue,
+                                                        backgroundColor: Colors.grey
+                                                )),
+                                        trailing: Text(category.itemList.length.toString()),
                                 );
                             },
                             body: _todoListBuilder(category.itemList, category_index++),
@@ -112,7 +130,7 @@ class _MainListViewState extends State<MainListView> {
                                             label: Text('Add'),
                                             onPressed: () {
                                                 setState(() {
-                                                    _data[index].itemList.add(Item(todoTitle: 'Touch it to edit it'));
+                                                    _dayTodo.categoryList[index].itemList.add(Item(todoTitle: 'Edit touch'));
                                                 });
                                             },
                                     ),
@@ -140,6 +158,12 @@ class _MainListViewState extends State<MainListView> {
         return InkWell(
                 onTap: () {
                     setState(() {
+                        focusNode.addListener(() {
+                            if(focusNode.hasFocus) {
+                                _editingItem.todoTitle = _editingController.text;
+                                _editingItem.isEditingTitle = false;
+                            }
+                        });
                         item.isEditingTitle = true;
                         _editingItem = item;
                         _editingController = TextEditingController(text: item.todoTitle);
@@ -155,22 +179,26 @@ class _MainListViewState extends State<MainListView> {
                 child: Column(
                         children: [ 
                         Divider(),
-                        Row(
-                                children: [
-                                    Expanded(
-                                            child: ListTile(
-                                                    title: _editTodoTitle(itemList[index]),
+                        Slidable(
+                                endActionPane: ActionPane(
+                                        extentRatio: 0.15,
+                                        motion: ScrollMotion(),
+                                        children: [
+                                            SlidableAction(
+                                                    onPressed: (_) {
+                                                        setState(() {
+                                                            itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
+                                                        });
+                                                    },
+                                                    backgroundColor: Color(0xFFFE4A49),
+                                                    foregroundColor: Colors.white,
+                                                    icon: Icons.delete,
                                             ),
-                                    ),
-                                    IconButton(
-                                            onPressed: () {
-                                                setState(() {
-                                                    itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
-                                                });
-                                            },
-                                            icon: Icon(Icons.delete),
-                                    ),
-                                ],
+                                        ],
+                                ),
+                                child: ListTile(
+                                        title: _editTodoTitle(itemList[index]),
+                                ),
                         ),
                         SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
@@ -210,6 +238,26 @@ class _MainListViewState extends State<MainListView> {
 
     @override
     Widget build(BuildContext context) {
+        _dayTodo.categoryList.forEach((category) {
+            category.itemList.forEach((item) {
+                category.categoryValue += item.itemValue;
+            });
+            if(category.itemList.length != 0)
+                category.categoryValue /= category.itemList.length * 100;
+            else
+                category.categoryValue = 0;
+        });
+
+        int categoryCount = 0;
+        _dayTodo.dayValue = 0;
+        _dayTodo.categoryList.forEach((category) {
+            _dayTodo.dayValue += category.categoryValue;
+            if(category.itemList.length != 0)
+                categoryCount++;
+        });
+
+        if(categoryCount != 0)
+            _dayTodo.dayValue /= categoryCount;
         return SingleChildScrollView(
                 child: Column(
                         children: [
@@ -220,7 +268,7 @@ class _MainListViewState extends State<MainListView> {
                                     child:  ClipRRect(
                                             borderRadius: BorderRadius.all(Radius.circular(4)),
                                             child: LinearProgressIndicator(
-                                                    value: 0.4522,
+                                                    value: _dayTodo.dayValue,
                                                     backgroundColor: Colors.grey,
                                             ),
                                     ),
