@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class MainListView extends StatefulWidget {
     @override
@@ -129,7 +130,7 @@ class _MainListViewState extends State<MainListView> {
                                             label: Text('Add'),
                                             onPressed: () {
                                                 setState(() {
-                                                    _dayTodo.categoryList[index].itemList.add(Item(todoTitle: 'Touch it to edit it'));
+                                                    _dayTodo.categoryList[index].itemList.add(Item(todoTitle: 'Edit touch'));
                                                 });
                                             },
                                     ),
@@ -157,6 +158,12 @@ class _MainListViewState extends State<MainListView> {
         return InkWell(
                 onTap: () {
                     setState(() {
+                        focusNode.addListener(() {
+                            if(focusNode.hasFocus) {
+                                _editingItem.todoTitle = _editingController.text;
+                                _editingItem.isEditingTitle = false;
+                            }
+                        });
                         item.isEditingTitle = true;
                         _editingItem = item;
                         _editingController = TextEditingController(text: item.todoTitle);
@@ -172,22 +179,26 @@ class _MainListViewState extends State<MainListView> {
                 child: Column(
                         children: [ 
                         Divider(),
-                        Row(
-                                children: [
-                                    Expanded(
-                                            child: ListTile(
-                                                    title: _editTodoTitle(itemList[index]),
+                        Slidable(
+                                endActionPane: ActionPane(
+                                        extentRatio: 0.15,
+                                        motion: ScrollMotion(),
+                                        children: [
+                                            SlidableAction(
+                                                    onPressed: (_) {
+                                                        setState(() {
+                                                            itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
+                                                        });
+                                                    },
+                                                    backgroundColor: Color(0xFFFE4A49),
+                                                    foregroundColor: Colors.white,
+                                                    icon: Icons.delete,
                                             ),
-                                    ),
-                                    IconButton(
-                                            onPressed: () {
-                                                setState(() {
-                                                    itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
-                                                });
-                                            },
-                                            icon: Icon(Icons.delete),
-                                    ),
-                                ],
+                                        ],
+                                ),
+                                child: ListTile(
+                                        title: _editTodoTitle(itemList[index]),
+                                ),
                         ),
                         SliderTheme(
                                 data: SliderTheme.of(context).copyWith(
@@ -205,9 +216,9 @@ class _MainListViewState extends State<MainListView> {
                                             });
                                         },
                                 ),
-                                ),
-                                ]),
-                                );                   
+                        ),
+                        ]),
+                        );                   
 
     }
 
