@@ -6,12 +6,22 @@ class MainListView extends StatefulWidget {
     _MainListViewState createState() => _MainListViewState();
 }
 
+class DayTodo {
+    DayTodo({
+        required this.categoryList,
+        this.dayValue = 0,
+    });
+
+    List<Category> categoryList;
+    double dayValue;
+}
+
 class Category {
     Category({
         required this.headerValue,
         required this.itemList,
         this.categoryValue = 0,
-        this.isExpanded = true,
+        this.isExpanded = false,
     });
 
     String headerValue;
@@ -53,7 +63,7 @@ class _MainListViewState extends State<MainListView> {
     late TextEditingController _editingController;
     late Item _editingItem;
     final focusNode = FocusNode();
-    final List<Category> _data = generateCategory(4);
+    final DayTodo _dayTodo = DayTodo(categoryList: generateCategory(4));
 
     @override
     void initState() {
@@ -82,15 +92,22 @@ class _MainListViewState extends State<MainListView> {
                 expandedHeaderPadding: const EdgeInsets.all(0.0),
                 expansionCallback: (int index, bool isExpanded) {
                     setState((){
-                        _data[index].isExpanded = !isExpanded;
+                        _dayTodo.categoryList[index].isExpanded = !isExpanded;
                     });
                 },
-                children: _data.map<ExpansionPanel>((Category category) {
+                children: _dayTodo.categoryList.map<ExpansionPanel>((Category category) {
                     return ExpansionPanel(
                             canTapOnHeader: true,
                             headerBuilder: (BuildContext context, bool isExpanded) {
                                 return ListTile(
                                         title: Text(category.headerValue),
+                                        subtitle: ClipRRect(
+                                                borderRadius: BorderRadius.all(Radius.circular(4)),
+                                                child: LinearProgressIndicator(
+                                                        value: category.categoryValue,
+                                                        backgroundColor: Colors.grey
+                                                )),
+                                        trailing: Text(category.itemList.length.toString()),
                                 );
                             },
                             body: _todoListBuilder(category.itemList, category_index++),
@@ -112,7 +129,7 @@ class _MainListViewState extends State<MainListView> {
                                             label: Text('Add'),
                                             onPressed: () {
                                                 setState(() {
-                                                    _data[index].itemList.add(Item(todoTitle: 'Touch it to edit it'));
+                                                    _dayTodo.categoryList[index].itemList.add(Item(todoTitle: 'Touch it to edit it'));
                                                 });
                                             },
                                     ),
@@ -188,9 +205,9 @@ class _MainListViewState extends State<MainListView> {
                                             });
                                         },
                                 ),
-                        ),
-                        ]),
-                        );                   
+                                ),
+                                ]),
+                                );                   
 
     }
 
@@ -210,6 +227,26 @@ class _MainListViewState extends State<MainListView> {
 
     @override
     Widget build(BuildContext context) {
+        _dayTodo.categoryList.forEach((category) {
+            category.itemList.forEach((item) {
+                category.categoryValue += item.itemValue;
+            });
+            if(category.itemList.length != 0)
+                category.categoryValue /= category.itemList.length * 100;
+            else
+                category.categoryValue = 0;
+        });
+
+        int categoryCount = 0;
+        _dayTodo.dayValue = 0;
+        _dayTodo.categoryList.forEach((category) {
+            _dayTodo.dayValue += category.categoryValue;
+            if(category.itemList.length != 0)
+                categoryCount++;
+        });
+
+        if(categoryCount != 0)
+            _dayTodo.dayValue /= categoryCount;
         return SingleChildScrollView(
                 child: Column(
                         children: [
@@ -220,7 +257,7 @@ class _MainListViewState extends State<MainListView> {
                                     child:  ClipRRect(
                                             borderRadius: BorderRadius.all(Radius.circular(4)),
                                             child: LinearProgressIndicator(
-                                                    value: 0.4522,
+                                                    value: _dayTodo.dayValue,
                                                     backgroundColor: Colors.grey,
                                             ),
                                     ),
