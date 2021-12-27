@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
+import 'package:provider/provider.dart';
 import './calendar.dart';
 import './mainListView.dart';
+import './todo.dart';
 
-void main() => runApp(MyApp());
+void main() {
+    runApp(
+            MultiProvider(
+                    providers:[
+                        ChangeNotifierProvider(create: (_) => DayTodo(categoryList: generateCategory(4), date: DateTime.now())),
+                    ],
+                    child: MyApp(),
+            ),
+    );
+}
 
 class MyApp extends StatelessWidget {
     @override

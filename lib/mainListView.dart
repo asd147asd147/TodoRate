@@ -1,70 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
+import './todo.dart';
 
 class MainListView extends StatefulWidget {
     @override
     _MainListViewState createState() => _MainListViewState();
 }
 
-class DayTodo {
-    DayTodo({
-        required this.categoryList,
-        this.dayValue = 0,
-    });
-
-    List<Category> categoryList;
-    double dayValue;
-}
-
-class Category {
-    Category({
-        required this.headerValue,
-        required this.itemList,
-        this.categoryValue = 0,
-        this.isExpanded = false,
-    });
-
-    String headerValue;
-    double categoryValue;
-    bool isExpanded;
-    List<Item> itemList;
-}
-
-class Item {
-    Item({
-        required this.todoTitle,
-        this.itemValue = 0,
-        this.isEditingTitle = false,
-    });
-
-    String todoTitle;
-    double itemValue;
-    bool isEditingTitle;
-}
-
-List<Category> generateCategory(int numberOfCategory) {
-    return List<Category>.generate(numberOfCategory, (int index) {
-        return Category(
-            headerValue: 'Category $index',
-            itemList: generateItems(2),
-        );
-    });
-}
-
-List<Item> generateItems(int numberOfItems) {
-    return List<Item>.generate(numberOfItems, (int index) {
-        return Item(
-                todoTitle: 'This is todo number $index',
-        );
-    });
-}
-
 class _MainListViewState extends State<MainListView> {
     late TextEditingController _editingController;
     late Item _editingItem;
     final focusNode = FocusNode();
-    final DayTodo _dayTodo = DayTodo(categoryList: generateCategory(4));
+    late DayTodo _dayTodo;
 
     @override
     void initState() {
@@ -131,6 +80,7 @@ class _MainListViewState extends State<MainListView> {
                                             onPressed: () {
                                                 setState(() {
                                                     _dayTodo.categoryList[index].itemList.add(Item(todoTitle: 'Edit touch'));
+                                                    _dayTodo.changeDayValue();
                                                 });
                                             },
                                     ),
@@ -188,6 +138,7 @@ class _MainListViewState extends State<MainListView> {
                                                     onPressed: (_) {
                                                         setState(() {
                                                             itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
+                                                            _dayTodo.changeDayValue();
                                                         });
                                                     },
                                                     backgroundColor: Color(0xFFFE4A49),
@@ -213,6 +164,7 @@ class _MainListViewState extends State<MainListView> {
                                         onChanged: (double value){
                                             setState(() {
                                                 itemList[index].itemValue = value;
+                                                _dayTodo.changeDayValue();
                                             });
                                         },
                                 ),
@@ -238,26 +190,8 @@ class _MainListViewState extends State<MainListView> {
 
     @override
     Widget build(BuildContext context) {
-        _dayTodo.categoryList.forEach((category) {
-            category.itemList.forEach((item) {
-                category.categoryValue += item.itemValue;
-            });
-            if(category.itemList.length != 0)
-                category.categoryValue /= category.itemList.length * 100;
-            else
-                category.categoryValue = 0;
-        });
+        _dayTodo = context.watch<DayTodo>();
 
-        int categoryCount = 0;
-        _dayTodo.dayValue = 0;
-        _dayTodo.categoryList.forEach((category) {
-            _dayTodo.dayValue += category.categoryValue;
-            if(category.itemList.length != 0)
-                categoryCount++;
-        });
-
-        if(categoryCount != 0)
-            _dayTodo.dayValue /= categoryCount;
         return SingleChildScrollView(
                 child: Column(
                         children: [

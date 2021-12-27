@@ -1,54 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class TodoList {
-    List<Todo> todos = [];
-    int get length => todos.length;
+class DayTodo with ChangeNotifier{
+    DayTodo({
+        required this.categoryList,
+        required this.date,
+        this.dayValue = 0,
+    });
 
-    TodoList();
-
-    void addItem(String name) {
-        todos.add(new Todo(name));
-    }
-
-    void removeItem(int index) {
-        todos.removeAt(index);
-    }
-
-    TodoList.fromJson(Map<String, dynamic> json) {
-        if (json['todo'] != null) {
-            todos = [];
-            json['todo'].forEach((v) {
-                todos.add(new Todo.fromJson(v));
+    void changeDayValue() {
+        this.categoryList.forEach((category) {
+            category.itemList.forEach((item) {
+                category.categoryValue += item.itemValue;
             });
-        }
-    }
+            if(category.itemList.length != 0)
+                category.categoryValue /= category.itemList.length * 100;
+            else
+                category.categoryValue = 0;
+        });
 
-    Map<String, dynamic> toJson() {
-        final Map<String, dynamic> data = new Map<String, dynamic>();
-        if (this.todos != null) {
-            data['todo'] = this.todos.map((v) => v.toJson()).toList();
-        }
-        return data;
+        int categoryCount = 0;
+        this.dayValue = 0;
+        this.categoryList.forEach((category) {
+            this.dayValue += category.categoryValue;
+            if(category.itemList.length != 0)
+                categoryCount++;
+        });
+
+        if(categoryCount != 0)
+            this.dayValue /= categoryCount;
+
+        notifyListeners();
     }
+    List<Category> categoryList;
+    DateTime date;
+    double dayValue;
 }
 
-class Todo {
-    String name = '';
-    bool isChecked = false;
-    String key = UniqueKey().toString();
-    double rate = 0;
+class Category {
+    Category({
+        required this.headerValue,
+        required this.itemList,
+        this.categoryValue = 0,
+        this.isExpanded = false,
+    });
 
-    Todo(String this.name);
+    String headerValue;
+    double categoryValue;
+    bool isExpanded;
+    List<Item> itemList;
+}
 
-    Todo.fromJson(Map<String, dynamic> json) {
-        name = json['name'];
-        isChecked = json['isChecked'];
-    }
+class Item {
+    Item({
+        required this.todoTitle,
+        this.itemValue = 0,
+        this.isEditingTitle = false,
+    });
 
-    Map<String, dynamic> toJson() {
-        final Map<String, dynamic> data = new Map<String, dynamic>();
-        data['name'] = this.name;
-        data['isChecked'] = this.isChecked;
-        return data;
-    }
+    String todoTitle;
+    double itemValue;
+    bool isEditingTitle;
+}
+
+List<Category> generateCategory(int numberOfCategory) {
+    return List<Category>.generate(numberOfCategory, (int index) {
+        return Category(
+            headerValue: 'Category $index',
+            itemList: generateItems(2),
+        );
+    });
+}
+
+List<Item> generateItems(int numberOfItems) {
+    return List<Item>.generate(numberOfItems, (int index) {
+        return Item(
+                todoTitle: 'This is todo number $index',
+        );
+    });
 }
