@@ -30,6 +30,9 @@ dependencies:
   flutter:
     sdk: flutter
   table_calendar: ^3.0.3
+  flutter_slidable: ^1.1.0
+  liquid_progress_indicator: ^0.4.0
+  provider: ^6.0.1
   flutter_localizations:
     sdk: flutter
 

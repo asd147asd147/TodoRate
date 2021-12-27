@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:provider/provider.dart';
+import './todo.dart';
 
 class MainCalendar extends StatefulWidget {
     @override
@@ -7,6 +11,7 @@ class MainCalendar extends StatefulWidget {
 }
 
 class _MainCalendarState extends State<MainCalendar> {
+    late DayTodo _dayTodo;
     CalendarFormat _calendarFormat = CalendarFormat.month;
     DateTime _focusedDay = DateTime.now();
     DateTime? _selectedDay;
@@ -72,57 +77,58 @@ class _MainCalendarState extends State<MainCalendar> {
         return CalendarBuilders(
                 selectedBuilder: (context, date, _) {
                     return Container(
-                            margin: const EdgeInsets.all(4.0),
+                            margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(10.0)),
-                            child: Text(
-                                    date.day.toString(),
-                                    style: TextStyle(color: Colors.white),
-                            ));
+                            child: LiquidLinearProgressIndicator(
+                                    value: 0, 
+                                    valueColor: AlwaysStoppedAnimation(Color(0xFF1974DE)),
+                                    backgroundColor: Colors.white, 
+                                    borderColor: Color(0xFF1974DE),
+                                    borderWidth: 1.0,
+                                    borderRadius: 5.0,
+                                    direction: Axis.vertical, 
+                                    center: Text(date.day.toString()),
+                            ),
+                    );
                 },
                 todayBuilder: (context, date, events) {
                     return Container(
-                            margin: const EdgeInsets.all(4.0),
+                            margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                    color: Colors.orange,
-                                    borderRadius: BorderRadius.circular(10.0)),
-                            child: Text(
-                                    date.day.toString(),
-                                    style: TextStyle(color: Colors.white),
-                            ));
+                            child: LiquidLinearProgressIndicator(
+                                    value: _dayTodo.dayValue, 
+                                    valueColor: AlwaysStoppedAnimation(Colors.pink),
+                                    backgroundColor: Colors.white, 
+                                    borderColor: Colors.red,
+                                    borderWidth: 1.0,
+                                    borderRadius: 5.0,
+                                    direction: Axis.vertical, 
+                                    center: Text(date.day.toString()),
+                            ),
+                    );
                 },
                 defaultBuilder: (context, date, _) {
                     return Container(
-                            margin: const EdgeInsets.all(4.0),
-                            padding: const EdgeInsets.only(top: 4.0),
+                            margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
-
+                            child: LiquidLinearProgressIndicator(
+                                    value: Random().nextInt(100)/100.0, 
+                                    valueColor: AlwaysStoppedAnimation(Color(0xFF8EDFFF)),
+                                    backgroundColor: Colors.white, 
+                                    borderColor: Color(0xFF1974DE),
+                                    borderWidth: 1.0,
+                                    borderRadius: 5.0,
+                                    direction: Axis.vertical, 
+                                    center: Text(date.day.toString()),
                             ),
-                            child: Column(
-                                    children: [
-                                        Container(
-                                                height: 20,
-                                                width: 20,
-                                                decoration: BoxDecoration(
-                                                        color: Colors.red,
-                                                        borderRadius: BorderRadius.circular(2.0)),
-                                        ),
-                                        Text(
-                                                date.day.toString(),
-                                                style: TextStyle(color: Colors.black),
-                                        ),
-                                    ],
-                            ));
+                    );
                 },
         );
     }
 
     @override
     Widget build(BuildContext context) {
+        _dayTodo = context.watch<DayTodo>();
         return buildTableCalendar();
     }
 }
