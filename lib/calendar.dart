@@ -87,7 +87,13 @@ class _MainCalendarState extends State<MainCalendar> {
                                     borderWidth: 1.0,
                                     borderRadius: 5.0,
                                     direction: Axis.vertical, 
-                                    center: Text(date.day.toString()),
+                                    center: Text(
+                                            date.day.toString(),
+                                            style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration: TextDecoration.underline,
+                                            ),
+                                    ),
                             ),
                     );
                 },

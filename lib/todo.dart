@@ -1,6 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class AllTodo with ChangeNotifier {
+    late Map<String, DayTodo> dayTodoMap;
+
+    void changeTodo(String date) {
+        DayTodo _dayTodo = dayTodoMap[date]!;
+        _dayTodo.categoryList.forEach((category) {
+            category.itemList.forEach((item) {
+                category.categoryValue += item.itemValue;
+            });
+            if(category.itemList.length != 0)
+                category.categoryValue /= category.itemList.length * 100;
+            else
+                category.categoryValue = 0;
+        });
+
+        int categoryCount = 0;
+        _dayTodo.dayValue = 0;
+        _dayTodo.categoryList.forEach((category) {
+            _dayTodo.dayValue += category.categoryValue;
+            if(category.itemList.length != 0)
+                categoryCount++;
+        });
+
+        if(categoryCount != 0)
+            _dayTodo.dayValue /= categoryCount;
+
+        notifyListeners();
+    }
+}
+
 class DayTodo with ChangeNotifier{
     DayTodo({
         required this.categoryList,
