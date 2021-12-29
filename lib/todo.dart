@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AllTodo with ChangeNotifier {
-    late Map<String, DayTodo> dayTodoMap;
+    Map<String, DayTodo> dayTodoMap = {
+        '20200101' : DayTodo(categoryList: generateCategory(1), date: DateTime.utc(2020,1,1)),
+        '20200102' : DayTodo(categoryList: generateCategory(2), date: DateTime.utc(2020,1,1)),
+    };
 
     void changeTodo(String date) {
         DayTodo _dayTodo = dayTodoMap[date]!;
@@ -28,6 +31,16 @@ class AllTodo with ChangeNotifier {
             _dayTodo.dayValue /= categoryCount;
 
         notifyListeners();
+    }
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        if(this.dayTodoMap != null) {
+            for(var v in this.dayTodoMap.entries) {
+                data[v.key] = v.value.toJson();
+            }
+        }
+        return data;
     }
 }
 
@@ -62,6 +75,17 @@ class DayTodo with ChangeNotifier{
 
         notifyListeners();
     }
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        data['date'] = this.date;
+        data['dayValue'] = this.dayValue;
+        if(this.categoryList != null) {
+            data['categoryList'] = this.categoryList.map((v) => v.toJson()).toList();
+        }
+        return data;
+    }
+
     List<Category> categoryList;
     DateTime date;
     double dayValue;
@@ -75,6 +99,17 @@ class Category {
         this.isExpanded = false,
     });
 
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        data['headerValue'] = this.headerValue;
+        data['categoryValue'] = this.categoryValue;
+        data['isExpanded'] = this.isExpanded;
+        if (this.itemList != null) {
+            data['itemList'] = this.itemList.map((v) => v.toJson()).toList();
+        }
+        return data;
+    }
+
     String headerValue;
     double categoryValue;
     bool isExpanded;
@@ -87,6 +122,13 @@ class Item {
         this.itemValue = 0,
         this.isEditingTitle = false,
     });
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        data['todoTitle'] = this.todoTitle;
+        data['itemValue'] = this.itemValue;
+        return data;
+    }
 
     String todoTitle;
     double itemValue;

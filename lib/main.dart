@@ -55,6 +55,8 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context) {
+        AllTodo test = AllTodo();
+        //print(test.toJson());
         return GestureDetector(
                 onTap: () {
                     FocusScope.of(context).unfocus();
