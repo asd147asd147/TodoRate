@@ -1,10 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+class TodoFileIO {
+    Future<String> get _localPath async {
+        final directory = await getApplicationDocumentsDirectory();
+
+        return directory.path;
+    }
+
+    Future<File> get _localFile async {
+        final path = await _localPath;
+        print('Save Path : $path');
+        return File('$path/todoList.txt');
+    }
+
+    Future<File> writeCounter(json) async {
+        final file = await _localFile;
+
+        return file.writeAsString('$json');
+    }
+
+}
 
 class AllTodo with ChangeNotifier {
     Map<String, DayTodo> dayTodoMap = {
-        '20200101' : DayTodo(categoryList: generateCategory(1), date: DateTime.utc(2020,1,1)),
-        '20200102' : DayTodo(categoryList: generateCategory(2), date: DateTime.utc(2020,1,1)),
+        DateTime.utc(2022,1,1).toString() : DayTodo(categoryList: generateCategory(1), date: DateTime.utc(2022,1,1)),
+        DateTime.utc(2022,1,2).toString() : DayTodo(categoryList: generateCategory(2), date: DateTime.utc(2022,1,2)),
     };
 
     void changeTodo(String date) {
@@ -151,3 +174,4 @@ List<Item> generateItems(int numberOfItems) {
         );
     });
 }
+
