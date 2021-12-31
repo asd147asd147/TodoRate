@@ -14,6 +14,7 @@ class _MainListViewState extends State<MainListView> {
     late Item _editingItem;
     final focusNode = FocusNode();
     late DayTodo _dayTodo;
+    late Map<String, DayTodo> dayTodoMap;
 
     @override
     void initState() {
@@ -190,7 +191,8 @@ class _MainListViewState extends State<MainListView> {
 
     @override
     Widget build(BuildContext context) {
-        _dayTodo = context.watch<DayTodo>();
+        dayTodoMap = context.watch<AllTodo>().dayTodoMap;
+        _dayTodo = dayTodoMap[DateTime.utc(2022,1,1).toString()]!;
 
         return SingleChildScrollView(
                 child: Column(

@@ -11,7 +11,7 @@ class MainCalendar extends StatefulWidget {
 }
 
 class _MainCalendarState extends State<MainCalendar> {
-    late DayTodo _dayTodo;
+    late Map<String, DayTodo> dayTodoMap;
     CalendarFormat _calendarFormat = CalendarFormat.month;
     DateTime _focusedDay = DateTime.now();
     DateTime? _selectedDay;
@@ -76,11 +76,12 @@ class _MainCalendarState extends State<MainCalendar> {
     CalendarBuilders calendarBuilder() {
         return CalendarBuilders(
                 selectedBuilder: (context, date, _) {
+                    print(date);
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
-                                    value: 0, 
+                                    value: 0, //dayTodoMap[date.toString()]!.dayValue, 
                                     valueColor: AlwaysStoppedAnimation(Color(0xFF1974DE)),
                                     backgroundColor: Colors.white, 
                                     borderColor: Color(0xFF1974DE),
@@ -102,7 +103,7 @@ class _MainCalendarState extends State<MainCalendar> {
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
-                                    value: _dayTodo.dayValue, 
+                                    value: 0, 
                                     valueColor: AlwaysStoppedAnimation(Colors.pink),
                                     backgroundColor: Colors.white, 
                                     borderColor: Colors.red,
@@ -118,7 +119,7 @@ class _MainCalendarState extends State<MainCalendar> {
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
-                                    value: Random().nextInt(100)/100.0, 
+                                    value: 0, 
                                     valueColor: AlwaysStoppedAnimation(Color(0xFF8EDFFF)),
                                     backgroundColor: Colors.white, 
                                     borderColor: Color(0xFF1974DE),
@@ -134,7 +135,7 @@ class _MainCalendarState extends State<MainCalendar> {
 
     @override
     Widget build(BuildContext context) {
-        _dayTodo = context.watch<DayTodo>();
+        dayTodoMap = context.watch<AllTodo>().dayTodoMap;
         return buildTableCalendar();
     }
 }

@@ -9,7 +9,7 @@ void main() {
     runApp(
             MultiProvider(
                     providers:[
-                        ChangeNotifierProvider(create: (_) => DayTodo(categoryList: generateCategory(4), date: DateTime.now())),
+                        ChangeNotifierProvider(create: (_) => AllTodo()),
                     ],
                     child: MyApp(),
             ),
@@ -55,8 +55,9 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context) {
+        TodoFileIO fileIO = TodoFileIO();
         AllTodo test = AllTodo();
-        //print(test.toJson());
+        fileIO.writeCounter(test.toJson());
         return GestureDetector(
                 onTap: () {
                     FocusScope.of(context).unfocus();
