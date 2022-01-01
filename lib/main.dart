@@ -42,9 +42,9 @@ class MainWindow extends StatefulWidget {
 
 class _MainWindowState extends State<MainWindow> {
     Widget mainCalendar = MainCalendar();
+    Widget mainListView = MainListView();
 
     Widget _mainBodyView() {
-        Widget mainListView = MainListView();
         return SingleChildScrollView(
                 child: Column(
                         children: [

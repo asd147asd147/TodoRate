@@ -100,6 +100,7 @@ class _MainCalendarState extends State<MainCalendar> {
                     );
                 },
                 todayBuilder: (context, date, events) {
+                    print(dayTodoMap[date.toString().substring(0,10)]!.dayValue);
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,

@@ -59,7 +59,6 @@ class AllTodo with ChangeNotifier {
     
     void setFocusedDay(DateTime date) {
         _focusedDay = date;
-        fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
 
@@ -95,6 +94,7 @@ class AllTodo with ChangeNotifier {
         for(var v in json.entries) {
             dayTodoMap[v.key] = new DayTodo.fromJson(v.value);
         }
+        notifyListeners();
     }
 
     Map<String, dynamic> toJson() {
