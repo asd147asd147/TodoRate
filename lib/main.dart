@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
 import 'package:provider/provider.dart';
+import 'dart:convert';
 import './calendar.dart';
 import './mainListView.dart';
 import './todo.dart';
@@ -55,9 +56,6 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context) {
-        TodoFileIO fileIO = TodoFileIO();
-        AllTodo allTodo = context.watch<AllTodo>();
-        fileIO.writeJson(allTodo.toJson());
         return GestureDetector(
                 onTap: () {
                     FocusScope.of(context).unfocus();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'dart:convert';
 
 class TodoFileIO {
     Future<String> get _localPath async {
@@ -22,6 +23,18 @@ class TodoFileIO {
         return file.writeAsString('$json');
     }
 
+    Future<String> readJson() async {
+        try {
+            final file = await _localFile;
+
+            print('Read Path : $file');
+            String json = await file.readAsString();
+            return json;
+        } catch (e) {
+            return '';
+        }
+    }
+
 }
 
 class AllTodo with ChangeNotifier {
@@ -29,8 +42,12 @@ class AllTodo with ChangeNotifier {
     DateTime _focusedDay = DateTime.now();
     DateTime get rawFocusedDay => _focusedDay;
     String get focusedDay => _focusedDay.toString().substring(0,10);
+    TodoFileIO fileIO = TodoFileIO();
 
     AllTodo() {
+        fileIO.readJson().then((String jsonString){
+            this.fromJson(jsonDecode(jsonString));
+        });
         if(this.dayTodoMap[focusedDay] == null) {
             addDayTodo(rawFocusedDay);
         }
@@ -42,6 +59,7 @@ class AllTodo with ChangeNotifier {
     
     void setFocusedDay(DateTime date) {
         _focusedDay = date;
+        fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
 
@@ -68,7 +86,15 @@ class AllTodo with ChangeNotifier {
         if(categoryCount != 0)
             _dayTodo.dayValue /= categoryCount;
 
+        fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
+    }
+
+    void fromJson(Map<String, dynamic> json) {
+        dayTodoMap = new Map<String, DayTodo>();
+        for(var v in json.entries) {
+            dayTodoMap[v.key] = new DayTodo.fromJson(v.value);
+        }
     }
 
     Map<String, dynamic> toJson() {
@@ -89,9 +115,19 @@ class DayTodo with ChangeNotifier{
         this.dayValue = 0,
     });
 
+    DayTodo.fromJson(Map<String, dynamic> json):
+        categoryList = <Category>[],
+        date = DateTime.parse(json['date']),
+        dayValue = json['dayValue'] as double
+    {
+        json['categoryList'].forEach((v) {
+            categoryList.add(new Category.fromJson(v));
+        });
+    }
+
     Map<String, dynamic> toJson() {
         final Map<String, dynamic> data = new Map<String, dynamic>();
-        data['date'] = this.date;
+        data['date'] = this.date.toString();
         data['dayValue'] = this.dayValue;
         if(this.categoryList != null) {
             data['categoryList'] = this.categoryList.map((v) => v.toJson()).toList();
@@ -111,6 +147,17 @@ class Category {
         this.categoryValue = 0,
         this.isExpanded = false,
     });
+
+    Category.fromJson(Map<String, dynamic> json):
+        headerValue = json['headerValue'],
+        itemList = <Item>[],
+        categoryValue = json['categoryValue'],
+        isExpanded = json['isExpanded']
+    {
+        json['itemList'].forEach((v) {
+            itemList.add(new Item.fromJson(v));
+        });
+    }
 
     Map<String, dynamic> toJson() {
         final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -135,6 +182,12 @@ class Item {
         this.itemValue = 0,
         this.isEditingTitle = false,
     });
+
+    Item.fromJson(Map<String, dynamic> json):
+        todoTitle = json['todoTitle'],
+        itemValue = json['itemValue'],
+        isEditingTitle = false
+    {}
 
     Map<String, dynamic> toJson() {
         final Map<String, dynamic> data = new Map<String, dynamic>();
