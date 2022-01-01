@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; 
 import 'package:provider/provider.dart';
+import 'dart:convert';
 import './calendar.dart';
 import './mainListView.dart';
 import './todo.dart';
@@ -43,7 +44,7 @@ class _MainWindowState extends State<MainWindow> {
     Widget mainCalendar = MainCalendar();
     Widget mainListView = MainListView();
 
-    Widget _mainBodyView(){
+    Widget _mainBodyView() {
         return SingleChildScrollView(
                 child: Column(
                         children: [
@@ -55,9 +56,6 @@ class _MainWindowState extends State<MainWindow> {
 
     @override
     Widget build(BuildContext context) {
-        TodoFileIO fileIO = TodoFileIO();
-        AllTodo test = AllTodo();
-        fileIO.writeCounter(test.toJson());
         return GestureDetector(
                 onTap: () {
                     FocusScope.of(context).unfocus();
