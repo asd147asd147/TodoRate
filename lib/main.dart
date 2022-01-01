@@ -41,9 +41,9 @@ class MainWindow extends StatefulWidget {
 
 class _MainWindowState extends State<MainWindow> {
     Widget mainCalendar = MainCalendar();
-    Widget mainListView = MainListView();
 
-    Widget _mainBodyView(){
+    Widget _mainBodyView() {
+        Widget mainListView = MainListView();
         return SingleChildScrollView(
                 child: Column(
                         children: [
@@ -56,8 +56,8 @@ class _MainWindowState extends State<MainWindow> {
     @override
     Widget build(BuildContext context) {
         TodoFileIO fileIO = TodoFileIO();
-        AllTodo test = AllTodo();
-        fileIO.writeCounter(test.toJson());
+        AllTodo allTodo = context.watch<AllTodo>();
+        fileIO.writeJson(allTodo.toJson());
         return GestureDetector(
                 onTap: () {
                     FocusScope.of(context).unfocus();

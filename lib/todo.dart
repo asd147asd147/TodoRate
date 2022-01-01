@@ -12,26 +12,41 @@ class TodoFileIO {
 
     Future<File> get _localFile async {
         final path = await _localPath;
-        print('Save Path : $path');
         return File('$path/todoList.txt');
     }
 
-    Future<File> writeCounter(json) async {
+    Future<File> writeJson(json) async {
         final file = await _localFile;
 
+        print('Save Path : $file');
         return file.writeAsString('$json');
     }
 
 }
 
 class AllTodo with ChangeNotifier {
-    Map<String, DayTodo> dayTodoMap = {
-        DateTime.utc(2022,1,1).toString() : DayTodo(categoryList: generateCategory(1), date: DateTime.utc(2022,1,1)),
-        DateTime.utc(2022,1,2).toString() : DayTodo(categoryList: generateCategory(2), date: DateTime.utc(2022,1,2)),
-    };
+    Map<String, DayTodo> dayTodoMap = {};
+    DateTime _focusedDay = DateTime.now();
+    DateTime get rawFocusedDay => _focusedDay;
+    String get focusedDay => _focusedDay.toString().substring(0,10);
 
-    void changeTodo(String date) {
-        DayTodo _dayTodo = dayTodoMap[date]!;
+    AllTodo() {
+        if(this.dayTodoMap[focusedDay] == null) {
+            addDayTodo(rawFocusedDay);
+        }
+    }
+
+    void addDayTodo(DateTime date) {
+        dayTodoMap[date.toString().substring(0,10)] = DayTodo(categoryList: generateCategory(3), date: date);
+    }
+    
+    void setFocusedDay(DateTime date) {
+        _focusedDay = date;
+        notifyListeners();
+    }
+
+    void changeTodo() {
+        DayTodo _dayTodo = dayTodoMap[focusedDay]!;
         _dayTodo.categoryList.forEach((category) {
             category.itemList.forEach((item) {
                 category.categoryValue += item.itemValue;
@@ -73,31 +88,6 @@ class DayTodo with ChangeNotifier{
         required this.date,
         this.dayValue = 0,
     });
-
-    void changeDayValue() {
-        this.categoryList.forEach((category) {
-            category.itemList.forEach((item) {
-                category.categoryValue += item.itemValue;
-            });
-            if(category.itemList.length != 0)
-                category.categoryValue /= category.itemList.length * 100;
-            else
-                category.categoryValue = 0;
-        });
-
-        int categoryCount = 0;
-        this.dayValue = 0;
-        this.categoryList.forEach((category) {
-            this.dayValue += category.categoryValue;
-            if(category.itemList.length != 0)
-                categoryCount++;
-        });
-
-        if(categoryCount != 0)
-            this.dayValue /= categoryCount;
-
-        notifyListeners();
-    }
 
     Map<String, dynamic> toJson() {
         final Map<String, dynamic> data = new Map<String, dynamic>();

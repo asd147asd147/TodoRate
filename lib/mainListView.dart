@@ -15,6 +15,7 @@ class _MainListViewState extends State<MainListView> {
     final focusNode = FocusNode();
     late DayTodo _dayTodo;
     late Map<String, DayTodo> dayTodoMap;
+    late AllTodo allTodo;
 
     @override
     void initState() {
@@ -81,7 +82,7 @@ class _MainListViewState extends State<MainListView> {
                                             onPressed: () {
                                                 setState(() {
                                                     _dayTodo.categoryList[index].itemList.add(Item(todoTitle: 'Edit touch'));
-                                                    _dayTodo.changeDayValue();
+                                                    allTodo.changeTodo();
                                                 });
                                             },
                                     ),
@@ -139,7 +140,7 @@ class _MainListViewState extends State<MainListView> {
                                                     onPressed: (_) {
                                                         setState(() {
                                                             itemList.removeWhere((Item currentItem) => itemList[index] == currentItem);
-                                                            _dayTodo.changeDayValue();
+                                                            allTodo.changeTodo();
                                                         });
                                                     },
                                                     backgroundColor: Color(0xFFFE4A49),
@@ -165,7 +166,7 @@ class _MainListViewState extends State<MainListView> {
                                         onChanged: (double value){
                                             setState(() {
                                                 itemList[index].itemValue = value;
-                                                _dayTodo.changeDayValue();
+                                                allTodo.changeTodo();
                                             });
                                         },
                                 ),
@@ -191,8 +192,9 @@ class _MainListViewState extends State<MainListView> {
 
     @override
     Widget build(BuildContext context) {
-        dayTodoMap = context.watch<AllTodo>().dayTodoMap;
-        _dayTodo = dayTodoMap[DateTime.utc(2022,1,1).toString()]!;
+        allTodo = context.watch<AllTodo>();
+        dayTodoMap = allTodo.dayTodoMap;
+        _dayTodo = dayTodoMap[allTodo.focusedDay]!;
 
         return SingleChildScrollView(
                 child: Column(

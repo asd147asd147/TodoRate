@@ -11,9 +11,10 @@ class MainCalendar extends StatefulWidget {
 }
 
 class _MainCalendarState extends State<MainCalendar> {
+    late AllTodo allTodo;
     late Map<String, DayTodo> dayTodoMap;
     CalendarFormat _calendarFormat = CalendarFormat.month;
-    DateTime _focusedDay = DateTime.now();
+    late DateTime _focusedDay;
     DateTime? _selectedDay;
 
     Widget buildTableCalendar() {
@@ -42,6 +43,7 @@ class _MainCalendarState extends State<MainCalendar> {
                         setState(() {
                             _selectedDay = selectedDay;
                             _focusedDay = focusedDay;
+                            allTodo.setFocusedDay(_focusedDay);
                         });
                     }
                 },
@@ -76,12 +78,11 @@ class _MainCalendarState extends State<MainCalendar> {
     CalendarBuilders calendarBuilder() {
         return CalendarBuilders(
                 selectedBuilder: (context, date, _) {
-                    print(date);
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
-                                    value: 0, //dayTodoMap[date.toString()]!.dayValue, 
+                                    value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
                                     valueColor: AlwaysStoppedAnimation(Color(0xFF1974DE)),
                                     backgroundColor: Colors.white, 
                                     borderColor: Color(0xFF1974DE),
@@ -103,7 +104,7 @@ class _MainCalendarState extends State<MainCalendar> {
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
-                                    value: 0, 
+                                    value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
                                     valueColor: AlwaysStoppedAnimation(Colors.pink),
                                     backgroundColor: Colors.white, 
                                     borderColor: Colors.red,
@@ -115,11 +116,14 @@ class _MainCalendarState extends State<MainCalendar> {
                     );
                 },
                 defaultBuilder: (context, date, _) {
+                    if(dayTodoMap[date.toString().substring(0,10)] == null) {
+                        allTodo.addDayTodo(date);
+                    }
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
-                                    value: 0, 
+                                    value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
                                     valueColor: AlwaysStoppedAnimation(Color(0xFF8EDFFF)),
                                     backgroundColor: Colors.white, 
                                     borderColor: Color(0xFF1974DE),
@@ -135,7 +139,9 @@ class _MainCalendarState extends State<MainCalendar> {
 
     @override
     Widget build(BuildContext context) {
-        dayTodoMap = context.watch<AllTodo>().dayTodoMap;
+        allTodo = context.watch<AllTodo>();
+        dayTodoMap = allTodo.dayTodoMap;
+        _focusedDay = allTodo.rawFocusedDay;
         return buildTableCalendar();
     }
 }
