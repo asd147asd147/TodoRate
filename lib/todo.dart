@@ -31,6 +31,7 @@ class TodoFileIO {
             String json = await file.readAsString();
             return json;
         } catch (e) {
+            this.writeJson('');
             return '';
         }
     }
@@ -46,7 +47,7 @@ class AllTodo with ChangeNotifier {
 
     AllTodo() {
         fileIO.readJson().then((String jsonString){
-            this.fromJson(jsonDecode(jsonString));
+            if(jsonString != '') this.fromJson(jsonDecode(jsonString));
         });
         if(this.dayTodoMap[focusedDay] == null) {
             addDayTodo(rawFocusedDay);
@@ -205,7 +206,7 @@ List<Category> generateCategory(int numberOfCategory) {
     return List<Category>.generate(numberOfCategory, (int index) {
         return Category(
             headerValue: 'Category $index',
-            itemList: generateItems(2),
+            itemList: generateItems(0),
         );
     });
 }
