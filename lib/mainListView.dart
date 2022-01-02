@@ -102,6 +102,7 @@ class _MainListViewState extends State<MainListView> {
                         setState(() {
                             item.todoTitle = newValue;
                             item.isEditingTitle = false;
+                            allTodo.changeTodo();
                         });
                     },
                     focusNode: focusNode,

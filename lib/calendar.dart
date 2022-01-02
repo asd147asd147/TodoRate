@@ -50,7 +50,7 @@ class _MainCalendarState extends State<MainCalendar> {
                 onFormatChanged: (format) {
                     if (_calendarFormat != format) {
                         setState(() {
-                            _calendarFormat = format;
+                            //_calendarFormat = format;
                         });
                     }
                 },
@@ -78,6 +78,9 @@ class _MainCalendarState extends State<MainCalendar> {
     CalendarBuilders calendarBuilder() {
         return CalendarBuilders(
                 selectedBuilder: (context, date, _) {
+                    if(dayTodoMap[date.toString().substring(0,10)] == null){
+                        allTodo.addDayTodo(date);
+                    }
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
@@ -100,7 +103,6 @@ class _MainCalendarState extends State<MainCalendar> {
                     );
                 },
                 todayBuilder: (context, date, events) {
-                    print(dayTodoMap[date.toString().substring(0,10)]!.dayValue);
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
@@ -117,7 +119,7 @@ class _MainCalendarState extends State<MainCalendar> {
                     );
                 },
                 defaultBuilder: (context, date, _) {
-                    if(dayTodoMap[date.toString().substring(0,10)] == null) {
+                    if(dayTodoMap[date.toString().substring(0,10)] == null){
                         allTodo.addDayTodo(date);
                     }
                     return Container(
