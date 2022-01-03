@@ -45,6 +45,7 @@ class _MainListViewState extends State<MainListView> {
                 expansionCallback: (int index, bool isExpanded) {
                     setState((){
                         _dayTodo.categoryList[index].isExpanded = !isExpanded;
+                        allTodo.changeTodo();
                     });
                 },
                 children: _dayTodo.categoryList.map<ExpansionPanel>((Category category) {

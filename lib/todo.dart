@@ -5,6 +5,9 @@ import 'dart:io';
 import 'dart:convert';
 
 class TodoFileIO {
+    String fileName = '';
+    TodoFileIO(this.fileName);
+
     Future<String> get _localPath async {
         final directory = await getApplicationDocumentsDirectory();
 
@@ -13,7 +16,7 @@ class TodoFileIO {
 
     Future<File> get _localFile async {
         final path = await _localPath;
-        return File('$path/todoList.txt');
+        return File('$path/$fileName');
     }
 
     Future<File> writeJson(json) async {
@@ -38,12 +41,69 @@ class TodoFileIO {
 
 }
 
+class CategoryList {
+    TodoFileIO fileIO = TodoFileIO('categoryList.txt');
+    List<CategoryUnit> items = [];
+    int get length => items.length;
+    
+    CategoryList() {
+        fileIO.readJson().then((String jsonString) {
+            if(jsonString == '') {
+                fileIO.writeJson(jsonEncode(this.toJson()));
+            }
+            else {
+                this.fromJson(jsonDecode(jsonString));
+            }
+        });
+    }
+
+    void changeCategory() {
+        fileIO.writeJson(jsonEncode(this.toJson()));
+    }
+
+    void addItem(String title) {
+        items.add(CategoryUnit(title));
+        fileIO.writeJson(jsonEncode(this.toJson()));
+    }
+
+    void fromJson(Map<String, dynamic> json) {
+        this.items = <CategoryUnit>[];
+        json['items'].forEach((v) {
+            items.add(new CategoryUnit.fromJson(v));
+        });
+    }
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        data['items'] = this.items.map((v) => v.toJson()).toList();
+        return data;
+    }
+}
+
+class CategoryUnit {
+    String categoryTitle = '';
+    bool isEditingTitle = false;
+    
+    CategoryUnit(this.categoryTitle);
+
+    CategoryUnit.fromJson(Map<String, dynamic> json):
+        categoryTitle = json['categoryTitle']
+    {}
+
+    Map<String, dynamic> toJson() {
+        final Map<String, dynamic> data = new Map<String, dynamic>();
+        data['categoryTitle'] = this.categoryTitle;
+        return data;
+    }
+}
+
 class AllTodo with ChangeNotifier {
     Map<String, DayTodo> dayTodoMap = {};
     DateTime _focusedDay = DateTime.now();
     DateTime get rawFocusedDay => _focusedDay;
     String get focusedDay => _focusedDay.toString().substring(0,10);
-    TodoFileIO fileIO = TodoFileIO();
+    TodoFileIO fileIO = TodoFileIO('todoList.txt');
+    CategoryList categoryList = CategoryList();
 
     AllTodo() {
         fileIO.readJson().then((String jsonString){
@@ -54,12 +114,55 @@ class AllTodo with ChangeNotifier {
         }
     }
 
+    void editCategory(String newValue, int index) {
+        for(var v in this.dayTodoMap.values) {
+            v.categoryList[index].headerValue = newValue;
+        }
+        fileIO.writeJson(jsonEncode(this.toJson()));
+        notifyListeners();
+    }
+
+    void changeIndex(int oldIndex, int newIndex) {
+        for(var v in this.dayTodoMap.values) {
+            final Category category = v.categoryList.removeAt(oldIndex);
+            v.categoryList.insert(newIndex, category);
+        }
+        fileIO.writeJson(jsonEncode(this.toJson()));
+        notifyListeners();
+    }
+
+    void addCategory(String title) {
+        categoryList.addItem(title);
+        for(var v in this.dayTodoMap.values) {
+            v.categoryList.add(Category(
+                            headerValue: title,
+                            itemList: generateItems(0),
+            ));
+        }
+        fileIO.writeJson(jsonEncode(this.toJson()));
+        notifyListeners();
+    }
+
+    void removeCategory(int index) {
+        for(var v in this.dayTodoMap.values) {
+            v.categoryList.removeAt(index);
+        }
+        fileIO.writeJson(jsonEncode(this.toJson()));
+        notifyListeners();
+    }
+
     void addDayTodo(DateTime date) {
-        dayTodoMap[date.toString().substring(0,10)] = DayTodo(categoryList: generateCategory(3), date: date);
+        dayTodoMap[date.toString().substring(0,10)] = DayTodo(categoryList: generateCategory(categoryList.items, categoryList.length), date: date);
     }
     
     void setFocusedDay(DateTime date) {
         _focusedDay = date;
+        notifyListeners();
+    }
+    
+    void changeCategory() {
+        categoryList.changeCategory();
+        fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
 
@@ -202,10 +305,10 @@ class Item {
     bool isEditingTitle;
 }
 
-List<Category> generateCategory(int numberOfCategory) {
+List<Category> generateCategory(List<CategoryUnit> categoryList, int numberOfCategory) {
     return List<Category>.generate(numberOfCategory, (int index) {
         return Category(
-            headerValue: 'Category $index',
+            headerValue: categoryList[index].categoryTitle,
             itemList: generateItems(0),
         );
     });

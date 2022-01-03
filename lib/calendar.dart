@@ -13,6 +13,7 @@ class MainCalendar extends StatefulWidget {
 class _MainCalendarState extends State<MainCalendar> {
     late AllTodo allTodo;
     late Map<String, DayTodo> dayTodoMap;
+    late CategoryList categoryList;
     CalendarFormat _calendarFormat = CalendarFormat.month;
     late DateTime _focusedDay;
     DateTime? _selectedDay;
