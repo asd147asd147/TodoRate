@@ -1,5 +1,6 @@
-# TodoRate
+# <img src="https://user-images.githubusercontent.com/55697983/148190275-d164c6b7-2329-4829-b913-0f4f693879d0.png" width="64px" height="64px" title="TodoRate Preview" alt="TodoRate Preview"></img> TodoRate 
 > **매일매일 달성률을 한눈에**
+
 
 ## 1st Mozza-Rella project with flutter.
 <p align="center">
