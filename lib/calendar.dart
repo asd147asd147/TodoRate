@@ -18,6 +18,9 @@ class _MainCalendarState extends State<MainCalendar> {
     late DateTime _focusedDay;
     DateTime? _selectedDay;
 
+    Color primaryBorder = Color(0xFF151026);
+    Color defaultColor = Colors.indigo;
+
     Widget buildTableCalendar() {
         return TableCalendar(
                 firstDay: DateTime.utc(2010,1,1),
@@ -58,22 +61,9 @@ class _MainCalendarState extends State<MainCalendar> {
                 onPageChanged: (focusedDay) {
                     _focusedDay = focusedDay;
                 },
-                locale: 'ko-KR',
-                //events: _events,
-                //holidays: _holidays,
-                //availableCalendarFormats: _availableCalendarFormats,
-                //calendarController: _calendarController,
+                //locale: 'ko-KR',
                 calendarBuilders: calendarBuilder(),
-                //onDaySelected: _onDaySelected,
-                //onVisibleDaysChanged: _onVisibleDaysChanged,
-                //onCalendarCreated: _onCalendarCreated,
         );
-    }
-
-    void _onDaySelected(DateTime day, DateTime e) {
-        setState(() {
-            _selectedDay = day;
-        });
     }
 
     CalendarBuilders calendarBuilder() {
@@ -87,9 +77,9 @@ class _MainCalendarState extends State<MainCalendar> {
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
                                     value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
-                                    valueColor: AlwaysStoppedAnimation(Color(0xFF1974DE)),
+                                    valueColor: AlwaysStoppedAnimation(Color(0xFFE81364)),
                                     backgroundColor: Colors.white, 
-                                    borderColor: Color(0xFF1974DE),
+                                    borderColor: Colors.red,
                                     borderWidth: 1.0,
                                     borderRadius: 5.0,
                                     direction: Axis.vertical, 
@@ -104,18 +94,33 @@ class _MainCalendarState extends State<MainCalendar> {
                     );
                 },
                 todayBuilder: (context, date, events) {
+                    Color? _borderColor;
+                    Animation<Color>? _valueColor;
+                    if(_selectedDay == null) {
+                        _selectedDay = date;
+                        _borderColor = Colors.red;
+                        _valueColor = AlwaysStoppedAnimation(Color(0xAAE91E63));
+                    }
+                    else {
+                        _borderColor = primaryBorder; 
+                        _valueColor = AlwaysStoppedAnimation(defaultColor);
+                    }
+                    
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
                                     value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
-                                    valueColor: AlwaysStoppedAnimation(Colors.pink),
+                                    valueColor: _valueColor,
                                     backgroundColor: Colors.white, 
-                                    borderColor: Colors.red,
+                                    borderColor: _borderColor, 
                                     borderWidth: 1.0,
                                     borderRadius: 5.0,
                                     direction: Axis.vertical, 
-                                    center: Text(date.day.toString()),
+                                    center: Text(
+                                            date.day.toString(),
+                                            style: TextStyle(color: Color(0xFF151026)),
+                                    ),
                             ),
                     );
                 },
@@ -128,13 +133,16 @@ class _MainCalendarState extends State<MainCalendar> {
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
                                     value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
-                                    valueColor: AlwaysStoppedAnimation(Color(0xFF8EDFFF)),
+                                    valueColor: AlwaysStoppedAnimation(defaultColor),
                                     backgroundColor: Colors.white, 
-                                    borderColor: Color(0xFF1974DE),
+                                    borderColor: primaryBorder,
                                     borderWidth: 1.0,
                                     borderRadius: 5.0,
                                     direction: Axis.vertical, 
-                                    center: Text(date.day.toString()),
+                                    center: Text(
+                                            date.day.toString(),
+                                            style: TextStyle(color: Color(0xFF151026)),
+                                    ),
                             ),
                     );
                 },

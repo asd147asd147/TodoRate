@@ -86,8 +86,7 @@ class _DrawerViewState extends State<DrawerView> {
                                             categoryList.items.removeWhere((CategoryUnit currentDrawer) {
                                                 return categoryList.items[index] == currentDrawer;
                                             });
-                                                allTodo.removeCategory(index);
-                                            categoryList.changeCategory();
+                                            allTodo.removeCategory(index);
                                         });
                                     },
                                     icon: Icon(Icons.delete),
@@ -105,12 +104,31 @@ class _DrawerViewState extends State<DrawerView> {
                         allTodo.changeIndex(oldIndex, newIndex);
                     });
                 },
-                header: DrawerHeader(
-                                margin: EdgeInsets.zero,
-                                decoration: BoxDecoration(
-                                        color: Colors.blue,
+                header: Container(
+                                height: 130,
+                                child: DrawerHeader(
+                                        margin: EdgeInsets.zero,
+                                        decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                        begin: Alignment.topLeft,
+                                                        end: Alignment.bottomRight,
+                                                        colors: <Color>[
+                                                            Color(0xFF151026),
+                                                            Colors.indigo,
+                                                        ],
+                                                ),
+                                        ),
+                                        child: ListTile(
+                                                title: Text(
+                                                        'Edit the category',
+                                                        style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 25,
+                                                                color: Colors.white,
+                                                        ),
+                                                ),
+                                        ),
                                 ),
-                                child: Text('Drawer Header'),
                         ),
                 );
     }
@@ -133,6 +151,9 @@ class _DrawerViewState extends State<DrawerView> {
                                                         Center(
                                                                 child: ElevatedButton.icon(
                                                                         icon: Icon(Icons.add),
+                                                                        style: ButtonStyle(
+                                                                                backgroundColor: MaterialStateProperty.all(Color(0xFF151026)),
+                                                                                ),
                                                                         label: Text('Add'),
                                                                         onPressed: () {
                                                                             setState(() {

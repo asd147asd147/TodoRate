@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     @override
     Widget build(BuildContext context) {
         return MaterialApp(
-                title: 'My Flutter Todo List',
+                title: 'TodoRate',
                 localizationsDelegates: [
                     GlobalMaterialLocalizations.delegate,
                     GlobalCupertinoLocalizations.delegate,
@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
                 supportedLocales: [
                     const Locale('ko', 'KR'),
                 ],
+                debugShowCheckedModeBanner: false,
                 home: MainWindow(),
         );
     }
@@ -65,10 +66,22 @@ class _MainWindowState extends State<MainWindow> {
                 child: Scaffold(
                                drawer: drawerView,
                                appBar: AppBar(
-                                title: Text('TodoRate'),
-                        ),
-                        body: _mainBodyView(),
-                ),
+                                       title: Text('TodoRate'),
+                                       flexibleSpace: Container(
+                                               decoration: BoxDecoration(
+                                                       gradient: LinearGradient(
+                                                               begin: Alignment.topLeft,
+                                                               end: Alignment.bottomRight,
+                                                               colors: <Color>[
+                                                                   Color(0xFF151026),
+                                                                   Colors.indigo,
+                                                               ],
+                                                       ),
+                                               ),
+                                       ),
+                               ),
+                               body: _mainBodyView(),
+                       ),
         );
     }
 }
