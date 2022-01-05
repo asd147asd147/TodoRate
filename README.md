@@ -65,5 +65,5 @@ RPG 게임에서의 퀘스트는 현재 진행상황 및 성취결과를 시각�
 </p>
 
 
-## Licencse
+## License
 TodoRate is released under the [MIT License](http://www.opensource.org/licenses/mit-license).
