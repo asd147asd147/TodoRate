@@ -87,9 +87,9 @@ class _MainCalendarState extends State<MainCalendar> {
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
                                     value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
-                                    valueColor: AlwaysStoppedAnimation(Color(0xFF1974DE)),
+                                    valueColor: AlwaysStoppedAnimation(Colors.pink),
                                     backgroundColor: Colors.white, 
-                                    borderColor: Color(0xFF1974DE),
+                                    borderColor: Colors.red,
                                     borderWidth: 1.0,
                                     borderRadius: 5.0,
                                     direction: Axis.vertical, 
@@ -104,14 +104,26 @@ class _MainCalendarState extends State<MainCalendar> {
                     );
                 },
                 todayBuilder: (context, date, events) {
+                    Color? _borderColor;
+                    Animation<Color>? _valueColor;
+                    if(_selectedDay == null) {
+                        _selectedDay = date;
+                        _borderColor = Colors.red;
+                        _valueColor = AlwaysStoppedAnimation(Colors.pink);
+                    }
+                    else {
+                        _borderColor = Color(0xFF1974DE);
+                        _valueColor = AlwaysStoppedAnimation(Color(0xFF8EDFFF));
+                    }
+                    
                     return Container(
                             margin: const EdgeInsets.all(8.0),
                             alignment: Alignment.center,
                             child: LiquidLinearProgressIndicator(
                                     value: dayTodoMap[date.toString().substring(0,10)]!.dayValue, 
-                                    valueColor: AlwaysStoppedAnimation(Colors.pink),
+                                    valueColor: _valueColor,
                                     backgroundColor: Colors.white, 
-                                    borderColor: Colors.red,
+                                    borderColor: _borderColor, 
                                     borderWidth: 1.0,
                                     borderRadius: 5.0,
                                     direction: Axis.vertical, 
