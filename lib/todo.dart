@@ -63,7 +63,6 @@ class CategoryList {
 
     void addItem(String title) {
         items.add(CategoryUnit(title));
-        fileIO.writeJson(jsonEncode(this.toJson()));
     }
 
     void fromJson(Map<String, dynamic> json) {
@@ -114,10 +113,18 @@ class AllTodo with ChangeNotifier {
         }
     }
 
+    void changeItemList(int oldIndex, int newIndex, int categoryIndex) {
+        for(var v in this.dayTodoMap.values) {
+
+        }
+
+    }
+
     void editCategory(String newValue, int index) {
         for(var v in this.dayTodoMap.values) {
             v.categoryList[index].headerValue = newValue;
         }
+        categoryList.changeCategory();
         fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
@@ -127,6 +134,7 @@ class AllTodo with ChangeNotifier {
             final Category category = v.categoryList.removeAt(oldIndex);
             v.categoryList.insert(newIndex, category);
         }
+        categoryList.changeCategory();
         fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
@@ -139,6 +147,7 @@ class AllTodo with ChangeNotifier {
                             itemList: generateItems(0),
             ));
         }
+        categoryList.changeCategory();
         fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
@@ -147,6 +156,7 @@ class AllTodo with ChangeNotifier {
         for(var v in this.dayTodoMap.values) {
             v.categoryList.removeAt(index);
         }
+        categoryList.changeCategory();
         fileIO.writeJson(jsonEncode(this.toJson()));
         notifyListeners();
     }
@@ -267,7 +277,7 @@ class Category {
         final Map<String, dynamic> data = new Map<String, dynamic>();
         data['headerValue'] = this.headerValue;
         data['categoryValue'] = this.categoryValue;
-        data['isExpanded'] = this.isExpanded;
+        data['isExpanded'] = false;
         if (this.itemList != null) {
             data['itemList'] = this.itemList.map((v) => v.toJson()).toList();
         }
