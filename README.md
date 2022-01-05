@@ -38,7 +38,7 @@ RPG 게임에서의 퀘스트는 현재 진행상황 및 성취결과를 시각�
 
 ### Todo 제거
 <p align="center">
-<img src="https://user-images.githubusercontent.com/55697983/148185588-ba68d1df-3c9a-4006-a069-3ccc69678f23.gif" width="250px" height="520px" title="TodoRate Home" alt="TodoRate Home"></img>
+<img src="https://user-images.githubusercontent.com/55697983/148185899-bde3bade-d18d-4eb9-9e80-6faa63ed9e0d.gif" width="250px" height="520px" title="TodoRate Home" alt="TodoRate Home"></img>
 </p>
 
 1. 삭제 하고싶은 Todo 좌측으로 슬라이드
@@ -46,7 +46,7 @@ RPG 게임에서의 퀘스트는 현재 진행상황 및 성취결과를 시각�
 
 ### 카테고리 순서 변경 및 제거
 <p align="center">
-<img src="https://user-images.githubusercontent.com/55697983/148185899-bde3bade-d18d-4eb9-9e80-6faa63ed9e0d.gif" width="250px" height="520px" title="TodoRate Home" alt="TodoRate Home"></img>
+<img src="https://user-images.githubusercontent.com/55697983/148189693-ddcd96bc-65e4-412f-8463-8438a9ab15ca.gif" width="250px" height="520px" title="TodoRate Home" alt="TodoRate Home"></img>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <img src="https://user-images.githubusercontent.com/55697983/148185905-661c58bd-4723-40d4-bb02-d65e16484773.gif" width="250px" height="520px" title="TodoRate Home" alt="TodoRate Home"></img>
 </p>
