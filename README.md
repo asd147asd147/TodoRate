@@ -1,10 +1,9 @@
 # <img src="https://user-images.githubusercontent.com/55697983/148190275-d164c6b7-2329-4829-b913-0f4f693879d0.png" width="64px" height="64px" title="TodoRate Preview" alt="TodoRate Preview"></img> TodoRate 
 > **매일매일 달성률을 한눈에**
 
-
 ## 1st Mozza-Rella project with flutter.
 <p align="center">
-<img src="https://user-images.githubusercontent.com/55697983/148177589-d5020e6d-64f5-450b-8fff-1db002ba4ca7.png" width="250px" height="520px" title="TodoRate Preview" alt="TodoRate Preview"></img>
+<img src="https://user-images.githubusercontent.com/55697983/148190819-d9c99fda-b497-42bc-b40b-b2ca1eacc48d.gif" width="250px" height="520px" title="TodoRate Preview" alt="TodoRate Preview"></img>
 </p>
 
 ## 개발동기
