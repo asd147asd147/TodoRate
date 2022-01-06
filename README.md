@@ -15,6 +15,9 @@ RPG 게임에서의 퀘스트는 현재 진행상황 및 성취결과를 시각�
 - Flutter 2.8.1
 - Mac air(Apple M1) Monterey
 
+## 개발기간
+- 2021/11/22 ~ 2022/01/06 (6 week)
+
 ## 사용방법
 ### 최초 실행화면
 <p align="center">
